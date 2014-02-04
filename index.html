@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Ensemplix API by web93onv</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
+  <style>
+    .source {
+      background-color: gray;
+      color: white;
+      max-height: 50px;
+      overflow: hidden;
+    }
+    .source.visible {
+      max-height: 100%;
+    }
+    .transparent {
+      color: transparent;
+    }
+    @font-face {
+      font-family:"Minecraft";
+      src:url("Minecraft 1.1.ttf") format("truetype");
+      font-weight:normal;
+      font-style:normal;
+    }
+  </style>
+  <link rel="stylesheet" href="blocks_items.css" />
+</head>
+<body>
+
+<div class="container" style="padding-top:20px;">
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="http://ens.pavlo.cc/">Ensemplix API</a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="http://ens.pavlo.cc/">Информация о игроке</a></li>
+      <li class="dropdown">
+        <a href="http://ensemplix.ru" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="http://ensemplix.ru">Главная страница</a></li>
+          <li class="divider"></li>
+          <li><a href="http://ensemplix.ru/articles/view/1/">Правила сервера</a></li>
+          <li><a href="http://ensemplix.ru/articles/view/6/">Команды сервера</a></li>
+          <li><a href="http://ensemplix.ru/articles/view/3/">Защита территории</a></li>
+          <li class="divider"></li>
+          <li><a href="http://ensemplix.ru/banlist">Банлист</a></li>
+        </ul>
+      </li>
+      <li class="dropdown">
+        <a href="http://forum.ensemplix.ru" class="dropdown-toggle" data-toggle="dropdown">Форум <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="http://forum.ensemplix.ru">Главная страница</a></li>
+          <li class="divider"></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=1">Объявления</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=3">Общий раздел</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=4">Помощь</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=6">Книга жалоб и предложений</a></li>
+          <li class="divider"></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=20">Sandbox</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=26">HiTech</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=56">Cogito</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=61">Carnage</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=67">Davids</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=109">Amber</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=119">Magnus</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=200">Theos</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=206">Dedal</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="http://pavlo.cc">Компьютерная помощь</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div id="ftj" class="alert alert-info fade in hidden">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="localStorage.ftj='visited';">×</button>
+  <strong>Здравствуй!</strong> Эта страница создана для игроков Minecraft сервера <a href="http://ensemplix.ru" class="alert-link">Ensemplix</a>.<br>
+  <strong>Ensemplix API</strong> предоставляет возможность узнать различную информацию о игроках.
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-body">
+    <form class="form-inline">
+      <div class="form-group">
+        <a href="#" class="btn btn-default" onclick="document.getElementById('blocks_input').classList.toggle('hidden');return false;">
+          <!--<i class="glyphicon glyphicon-chevron-left"></i>-->
+          <i class="glyphicon glyphicon-tree-deciduous"></i>
+          Логи блоков
+        </a>
+        <!--<a href="#" class="btn btn-default" onclick="document.getElementById('blocks_input').classList.toggle('hidden');return false;">
+          <i class="glyphicon glyphicon-chevron-left"></i>
+          <i class="glyphicon glyphicon-info-sign"></i>
+          Информация о игроке
+        </a>-->
+      </div>
+      <div class="form-group">
+        <input id="player_input" type="text" class="form-control" value="web93onv" placeholder="Никнейм" />
+      </div>
+      <div class="form-group">
+        <input id="player_sbmt" type="button" class="btn btn-primary" value="Отправить" />
+      </div>
+      <div class="form-group">
+        <div class="btn-group" data-toggle="buttons">
+          <label class="btn btn-primary active">
+            <input id="violations_check" type="checkbox" checked /> Нарушения
+          </label>
+          <label class="btn btn-primary active">
+            <input id="info_check" type="checkbox" checked /> Информация
+          </label>
+          <label class="btn btn-primary">
+            <input id="regions_check" type="checkbox" /> Регионы
+          </label>
+          <label class="btn btn-primary">
+            <input id="warps_check" type="checkbox" /> Варпы
+          </label>
+          <label class="btn btn-primary">
+            <input id="blocks_check" type="checkbox" /> Блоки
+          </label>
+        </div>
+      </div>
+    </form>
+    <div id="blocks_input" class="hidden">
+      <hr>
+      <form class="form-inline">
+        <div class="form-group">
+          <input id="blocks_x_z" type="text" class="form-control" value="0,0" placeholder="x,z" />
+        </div>
+        <div class="form-group">
+          <select id="blocks_world" class="form-control">
+            <option value="Sandbox">Sandbox</option>
+            <option value="CogitoR4">Cogito</option>
+            <option value="CarnageR4">Carnage</option>
+            <option value="Theos">Theos</option>
+            <option value="AmberR4">Amber</option>
+            <option value="DedalR2">Dedal</option>
+            <option value="HiTech152">HiTech</option>
+            <option value="Davids152" selected>Davids</option>
+            <option value="Magnus152">Magnus</option>
+          <select>
+        </div>
+        <div class="form-group">
+          <input id="blocks_sbmt" type="button" class="btn btn-primary" value="Логи блоков" />
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div id="violations" class="hidden"><h2>Нарушения</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="output"></div>
+    </div>
+    <div class="col-md-4">
+      <pre class="source"></pre>
+    </div>
+  </div>
+</div>
+
+<div id="info" class="hidden"><h2>Информация</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <pre class="panel-body output"></pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="source"></pre>
+    </div>
+  </div>
+</div>
+
+<div id="regions" class="hidden"><h2>Регионы</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <div class="output"></div>
+    </div>
+    <div class="col-md-4">
+      <pre class="source"></pre>
+    </div>
+  </div>
+</div>
+
+<div id="warps" class="hidden"><h2>Варпы</h2>
+  <div class="row">
+    <div class="col-md-8">
+      <pre class="output"></pre>
+    </div>
+    <div class="col-md-4">
+      <pre class="source"></pre>
+    </div>
+  </div>
+</div>
+
+<div id="blocks" class="hidden"><h2>Блоки</h2>
+  <div class="row">
+    <div class="col-md-9">
+      <pre class="output"></pre>
+    </div>
+    <div class="col-md-3">
+      <pre class="source"></pre>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var colors = [
+  {name:"black",color:"#151515",color2:"#151515",code:"0"},
+  {name:"darkblue",color:"#00a",color2:"rgb(0,0,42)",code:"1"},
+  {name:"darkgreen",color:"#0a0",color2:"rgb(0,42,0)",code:"2"},
+  {name:"darkaqua",color:"#0aa",color2:"rgb(0,42,42)",code:"3"},
+  {name:"darkred",color:"#a00",color2:"rgb(42,0,0)",code:"4"},
+  {name:"purple",color:"#a0a",color2:"rgb(42,0,42)",code:"5"},
+  {name:"gold",color:"#fa0",color2:"rgb(0,42,0)",code:"6"},
+  {name:"grey",color:"#aaa",color2:"rgb(42,42,42)",code:"7"},
+  {name:"darkgrey",color:"#555",color2:"rgb(21,21,21)",code:"8"},
+  {name:"blue",color:"#55f",color2:"rgb(21,21,63)",code:"9"},
+  {name:"green",color:"#5f5",color2:"rgb(21,63,21)",code:"a"},
+  {name:"aqua",color:"#5ff",color2:"rgb(21,63,63)",code:"b"},
+  {name:"red",color:"#f55",color2:"rgb(63,21,21)",code:"c"},
+  {name:"pink",color:"#f5f",color2:"rgb(63,21,63)",code:"d"},
+  {name:"yellow",color:"#ff5",color2:"rgb(63,63,21)",code:"e"},
+  {name:"white",color:"#fff",color2:"rgb(63,63,63)",code:"f"}
+];
+
+var res = "<table><tr><th>color name</th><th>color code</th><th>color hex</th><th>&nbsp;</th></tr>";
+for(var x = 0; x < colors.length; x++) {
+  res += "<tr><td>"+colors[x].name+"</td><td>"+colors[x].code+"</td><td>"+colors[x].color+"</td><td><span style='color:"+colors[x].color+";'>▉</span></td></tr>";
+}
+res += "</table>";
+//document.write(res);
+</script>
+
+<script>
+var xmlhttp;
+
+if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+  xmlhttp = new XMLHttpRequest();
+} else { // code for IE6, IE5
+  xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+}
+
+function xmlhttpStatus(xmlhttp) {
+  if(xmlhttp.readyState == 1) {
+    loading.className = "pending";
+  } else if(xmlhttp.readyState == 4) {
+    if(xmlhttp.status == 200) {
+      loading.className = "ok";
+    } else {
+      loading.className = "abort";
+    }
+  }
+}
+
+function timeToHuman(e) {
+  var theDate = new Date(e * 1000);
+  return theDate.toGMTString();
+}
+
+function request() {
+  this.callback = function() { alert("callback"); };
+  this.url;
+  //this.send = function() { alert("send"); this.callback(); };
+}
+
+request.prototype.send = function(url) {
+  if(url == undefined) {
+    alert("wrong url");
+    return false;
+  }
+  xmlhttp.onreadystatechange = this.callback;
+  xmlhttp.open("GET", url, false);
+  xmlhttp.send();
+}
+
+var info = new request();
+info.callback = function(e) {
+  var el = document.querySelector("#info .output");
+  var el_src = document.querySelector("#info .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText)[0];
+    
+    var levelcolor = ((parsed.level==null)||(parsed.level==undefined)?"":parsed.level==2?"&3":parsed.level==3?"&6":parsed.level==4?"&9":parsed.level==5?"&e":parsed.level>=6?"&c":"");
+    var namecolor = (parsed.name_color!=null?"&"+parsed.name_color:"");
+    var chatcolor = (parsed.chat_color!=null?"&"+parsed.chat_color:"");
+    var prefix = (parsed.prefix!=null?"&f"+parsed.prefix.replace(/§/g,"&")+" ":"");
+    
+    var a = "&f"+prefix+" &f"+levelcolor+"<&f"+namecolor+(/ensiriuswow/i.test(parsed.player)?"Сириус":parsed.player)+"&f"+levelcolor+"> &f"+chatcolor+"Привет :)";
+    a = a.split("&");
+    
+    var resA = "";
+    var resB = "";
+    for(var x = 0; x < a.length; x++) {
+      var color = "";
+      var color2 = "";
+      if(x != 0) {
+        var tmp = a[x].substring(1,a[x].length);
+        for(var y = 0; y < colors.length; y++) {
+          if(colors[y].code == a[x].substring(0,1)) {
+            color = colors[y].color;
+            color2 = colors[y].color2;
+            break;
+          }
+        }
+        resA += "<span style='color:"+color+";'>"+tmp+"</span>";
+        resB += "<span style='color:"+color2+";'>"+tmp+"</span>";
+      } else {
+        resA += "<span style='color:"+color+";'>"+a[x]+"</span>";
+        resB += "<span style='color:"+color2+";'>"+a[x]+"</span>";
+      }
+    }
+    
+    var res2 = ""
+      +"<p style=\"position:absolute;color:white;font-family:'Minecraft';font-size:16px;\">&nbsp;"+resA+"</p>"
+      +"<p style=\"padding:2px 0 0 2px;background-color:#444;color:white;font-family:'Minecraft';font-size:16px;\">&nbsp;"+resB+"</p>"
+      +"<img src=\""+parsed.logo_url+"\" class=\"img-thumbnail\"><br>"
+      +"<b>"+parsed.player+"</b> достиг <b>"+parsed.level+"</b> уровеня волшебства<br>"
+      +"Имущество: <b>"+parsed.coins+" койн</b><br>"
+      +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b><br>"
+      +"Последний раз был на сайте: <b>"+timeToHuman(parsed.last_online)+"</b>";
+    
+    el.innerHTML = res2;
+    el_src.innerHTML = JSON.stringify(parsed,undefined,2);
+    
+    document.getElementById("info").classList.remove("hidden");
+  }
+}
+
+var violations = new request();
+violations.callback = function(e) {
+  var el = document.querySelector("#violations .output");
+  var el_src = document.querySelector("#violations .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    var res = "";
+    if(parsed.muted == null && parsed.banned == null) {
+      res += "<div class='alert alert-success'><b>"+player_input.value+"</b> сейчас не наказан</div>";
+    }
+    
+    if(parsed.muted != null) { //<p class='text-danger'>
+      res += "<div class='alert alert-danger'><b>"+parsed.muted.player
+        +"</b> замучен <b>"
+        +parsed.muted.admin
+        +"</b> по причине <b>"
+        +parsed.muted.reason
+        +"</b><br>от <b>"
+        +timeToHuman(parsed.muted.created)+"</b>, до <b>"+timeToHuman(parsed.muted.till)+"</b></div>";
+    }
+    
+    if(parsed.banned != null) {
+      res += "<div class='alert alert-danger'><b>"+parsed.banned.player
+        +"</b> забанен <b>"
+        +parsed.banned.admin
+        +"</b> по причине <b>"
+        +parsed.banned.reason
+        +"</b><br>от <b>"
+        +timeToHuman(parsed.banned.created)+"</b>, <b>"+(parsed.banned.till==-1?"навсегда":"до "+timeToHuman(parsed.banned.till))+"</b></div>";
+    }
+    
+    el.innerHTML = res;
+    el_src.innerHTML = JSON.stringify(parsed,undefined,2);
+    
+    document.getElementById("violations").classList.remove("hidden");
+  }
+}
+
+var regions = new request();
+regions.callback = function(e) {
+  var el = document.querySelector("#regions .output");
+  var el_src = document.querySelector("#regions .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    var res = "<div class=\"panel panel-default\">"
+      +"<div class=\"panel-body\">"
+        +"Регионы игрока "+player_input.value;
+
+    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
+    if(pages > 0) {
+      res += ". Страница <select onchange=\"regions.send('http://api.ensemplix.ru/v2/regions/player/?player='+player_input.value+'&offset='+this.value*100);\">";
+      for(var x = 0; x <= pages; x++) {
+        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
+          res += "<option selected>"+x+"</option>";
+        } else if(x == Number(parsed.offset)/100) {
+          res += "<option selected>"+x+"</option>";
+        } else {
+          res += "<option>"+x+"</option>";
+        }
+      }
+      res += "</select> из "+pages;
+    }
+    
+    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+
+    res += "</div>"
+      +"<ul class=\"list-group\">";
+    for(var x = 0; x < parsed.regions.length; x++) {
+      var region = parsed.regions[x];
+      var xlength = Math.abs(region.min_x - region.max_x);
+      var xmin = Math.min(region.min_x, region.max_x);
+      
+      var zlength = Math.abs(region.min_z - region.max_z);
+      var zmin = Math.min(region.min_z, region.max_z);
+      
+      var ylength = Math.max(region.min_y, region.max_y)-Math.min(region.min_y, region.max_y);
+      var ycenter = ((Math.min(region.min_y, region.max_y)+ylength/2)|0);
+      
+      var members = "";
+      if(region.members.length != 0) {
+        members = [];
+        for(var y = 0; y < region.members.length; y++) {
+          if(!player_regexp.test(region.members[y])) {
+            members.push("<a href='?player="+region.members[y]+"'>"+region.members[y]+"</a>");
+          } else {
+            members.push(region.members[y]);
+          }
+        }
+        members = members.join(", ");
+      }
+      
+      var owners = "";
+      if(region.owners.length != 0) {
+        owners = [];
+        for(var y = 0; y < region.owners.length; y++) {
+          if(!player_regexp.test(region.owners[y])) {
+            owners.push("<a href='?player="+region.owners[y]+"'>"+region.owners[y]+"</a>");
+          } else {
+            owners.push(region.owners[y]);
+          }
+        }
+        owners = owners.join(", ");
+      }
+      
+      res += "<li class=\"list-group-item\"><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>, /tp "+((Math.min(region.min_x, region.max_x)+Math.abs(region.min_x - region.max_x)/2)|0)+","+ycenter+","+((Math.min(region.min_z, region.max_z)+Math.abs(region.min_z - region.max_z)/2)|0)+"<br>"
+        +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br>":"")
+        +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br>":"")
+        +(region.flags.length==0?"":"<b>Флаги:</b> "+region.flags.join(", ")+"<br>")
+        +"<b>Объем:</b> "+(xlength+1)+"&times;"+(ylength+1)+"&times;"+(zlength+1)+" = "+((xlength+1)*(zlength+1)*(ylength+1))+"<br>"
+        +"<b>Дата создания:</b> "+timeToHuman(region.created)+"</li>";
+    }
+    res += "</ul>"
++"</div>"
+        
+    el.innerHTML = res;
+    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+    
+    document.getElementById("regions").classList.remove("hidden");
+  }
+}
+
+var warps = new request();
+warps.callback = function(e) {
+  var el = document.querySelector("#warps .output");
+  var el_src = document.querySelector("#warps .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    var res = "<table width=\"100%\">";
+    for(var x = 0; x < parsed.warps.length; x++) {
+      res += "<tr><td>"+parsed.warps[x].world+"</td><td>/warp "+parsed.warps[x].warp+"</td><td>"+timeToHuman(parsed.warps[x].created)+"</td></tr>";
+    }
+    res += "</table>"
+    
+    el.innerHTML = res;
+    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+    
+    document.getElementById("warps").classList.remove("hidden");
+  }
+}
+
+var blocks = new request();
+blocks.callback = function(e) {
+  var el = document.querySelector("#blocks .output");
+  var el_src = document.querySelector("#blocks .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    var res = "";
+    /*
+    "count": 201733,
+    "offset": null,
+    */
+    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
+    if(pages > 0) {
+      res += "Страница <select onchange=\"blocks.send('http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value+"&offset='+this.value*100);\">";
+      for(var x = 0; x <= pages; x++) {
+        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
+          res += "<option value=\""+x+"\" selected>"+x+"</option>";
+        } else if(x == Number(parsed.offset)/100) {
+          res += "<option value=\""+x+"\" selected>"+x+"</option>";
+        } else {
+          res += "<option value=\""+x+"\">"+x+"</option>";
+        }
+      }
+      res += "</select> из "+pages+"<hr>";
+    }
+    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    
+    res += "<table width=\"100%\">";
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
+      
+      if(!player_regexp.test(parsed.blocks[x].player)) {
+        res += "<a href='?player="+parsed.blocks[x].player+"'>"+parsed.blocks[x].player+"</a>";
+      } else {
+        res += parsed.blocks[x].player;
+      }
+      
+      res += "</td><td><span class=\"item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"\"></span> "
+      +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
+      +"<td><span class='transparent'>/tp</span> "+parsed.blocks[x].x+"<span class='transparent'>,</span>"
+      +""+parsed.blocks[x].y+"<span class='transparent'>,</span>"
+      +""+parsed.blocks[x].z+"</td>"
+      +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
+    }
+    res += "</table>"
+    
+    el.innerHTML = res;
+    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+    
+    document.getElementById("blocks").classList.remove("hidden");
+  }
+}
+
+var blocks2 = new request();
+blocks2.callback = function(e) {
+  var el = document.querySelector("#blocks .output");
+  var el_src = document.querySelector("#blocks .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    var res = "";
+    /*
+    "count": 201733,
+    "offset": null,
+    */
+    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
+    if(pages > 0) {
+      res += "Страница <select onchange=\"blocks.send('http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]+"&offset='+this.value*100);\">";
+      for(var x = 0; x <= pages; x++) {
+        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
+          res += "<option value=\""+x+"\" selected>"+x+"</option>";
+        } else if(x == Number(parsed.offset)/100) {
+          res += "<option value=\""+x+"\" selected>"+x+"</option>";
+        } else {
+          res += "<option value=\""+x+"\">"+x+"</option>";
+        }
+      }
+      res += "</select> из "+pages+"<hr>";
+    }
+    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    
+    res += "<table width=\"100%\">";
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
+      
+      if(!player_regexp.test(parsed.blocks[x].player)) {
+        res += "<a href='?player="+parsed.blocks[x].player+"'>"+parsed.blocks[x].player+"</a>";
+      } else {
+        res += parsed.blocks[x].player;
+      }
+      
+      res += "</td><td><span class=\"item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"\"></span> "
+      +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
+      +"<td><span class='transparent'>/tp</span> "+parsed.blocks[x].x+"<span class='transparent'>,</span>"
+      +""+parsed.blocks[x].y+"<span class='transparent'>,</span>"
+      +""+parsed.blocks[x].z+"</td>"
+      +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
+    }
+    res += "</table>"
+    
+    el.innerHTML = res;
+    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+    
+    document.getElementById("blocks").classList.remove("hidden");
+  }
+}
+
+document.addEventListener("click", function(e) {
+  if(e.target.id === "blocks_sbmt") {
+    document.getElementById("violations").classList.add("hidden");
+    document.getElementById("info").classList.add("hidden");
+    document.getElementById("regions").classList.add("hidden");
+    document.getElementById("blocks").classList.add("hidden");
+    document.getElementById("warps").classList.add("hidden");
+    blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]);
+  } else if(e.target.id === "player_sbmt") {
+    var a = document.querySelectorAll(".output");
+    for(var x = 0; x < a.length; x++) {
+      a[x].innerHTML = "";
+    }
+    a = document.querySelectorAll(".source");
+    for(var x = 0; x < a.length; x++) {
+      a[x].innerHTML = "";
+    }
+    
+    if(violations_check.checked) {
+      violations.send("http://api.ensemplix.ru/v2/player/violations/?player="+player_input.value);
+    } else {
+      document.getElementById("violations").classList.add("hidden");
+    }
+    
+    if(info_check.checked) {
+      info.send("http://api.ensemplix.ru/v2/player/info/?player="+player_input.value);
+    } else {
+      document.getElementById("info").classList.add("hidden");
+    }
+    
+    if(regions_check.checked) {
+      regions.send("http://api.ensemplix.ru/v2/regions/player/?player="+player_input.value);
+    } else {
+      document.getElementById("regions").classList.add("hidden");
+    }
+    
+    if(blocks_check.checked) {
+      blocks.send("http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value);
+    } else {
+      document.getElementById("blocks").classList.add("hidden");
+    }
+    
+    if(warps_check.checked) {
+      warps.send("http://api.ensemplix.ru/v2/warps/player/?player="+player_input.value);
+    } else {
+      document.getElementById("warps").classList.add("hidden");
+    }
+  }
+  if(e.target.classList.contains("source")) {
+    e.target.classList.toggle("visible");
+  }
+});
+
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
+var player = getParameterByName("player");
+
+if(player != "") {
+  player_input.value = player;
+  player_sbmt.click();
+}
+
+var ls = localStorage;
+if(ls["ftj"] == undefined) {
+  ftj.classList.toggle("hidden");
+}
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46473418-1', 'pavlo.cc');
+  ga('send', 'pageview');
+</script>
+
+</body>
+</html>
