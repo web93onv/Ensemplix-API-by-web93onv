@@ -87,10 +87,9 @@
   </div>
 </nav>
 
-<div id="ftj" class="alert alert-info fade in hidden">
-  <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="localStorage.ftj='visited';">×</button>
-  <strong>Здравствуй!</strong> Эта страница создана для игроков Minecraft сервера <a href="http://ensemplix.ru" class="alert-link">Ensemplix</a>.<br>
-  <strong>Ensemplix API</strong> предоставляет возможность узнать различную информацию о игроках.
+<div id="first_time_join" class="alert alert-info fade in hidden">
+  <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="localStorage.first_time_join='visited';">×</button>
+  <strong>Здравствуй!</strong> Эта страница предоставляет возможность узнать различную информацию о игроках Minecraft сервера <a href="http://ensemplix.ru" class="alert-link">Ensemplix</a>.
 </div>
 
 <div class="panel panel-default">
@@ -98,15 +97,9 @@
     <form class="form-inline">
       <div class="form-group">
         <a href="#" class="btn btn-default" onclick="document.getElementById('blocks_input').classList.toggle('hidden');return false;">
-          <!--<i class="glyphicon glyphicon-chevron-left"></i>-->
           <i class="glyphicon glyphicon-tree-deciduous"></i>
           Логи блоков
         </a>
-        <!--<a href="#" class="btn btn-default" onclick="document.getElementById('blocks_input').classList.toggle('hidden');return false;">
-          <i class="glyphicon glyphicon-chevron-left"></i>
-          <i class="glyphicon glyphicon-info-sign"></i>
-          Информация о игроке
-        </a>-->
       </div>
       <div class="form-group">
         <input id="player_input" type="text" class="form-control" value="web93onv" placeholder="Никнейм" />
@@ -714,8 +707,8 @@ if(player != "") {
 }
 
 var ls = localStorage;
-if(ls["ftj"] == undefined) {
-  ftj.classList.toggle("hidden");
+if(ls["first_time_join"] == undefined) {
+  document.getElementById("first_time_join").classList.toggle("hidden");
 }
 </script>
 
