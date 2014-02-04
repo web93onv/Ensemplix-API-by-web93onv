@@ -82,7 +82,8 @@
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="http://pavlo.cc">Компьютерная помощь</a></li>
+      <li><a class="icon" href="https://github.com/web93onv/Ensemplix-API-by-web93onv" target="_blank">GitHub</a></li>
+      <li><a class="icon" href="http://pavlo.cc" target="_blank">Компьютерная помощь</a></li>
     </ul>
   </div>
 </nav>
@@ -710,6 +711,16 @@ var ls = localStorage;
 if(ls["first_time_join"] == undefined) {
   document.getElementById("first_time_join").classList.toggle("hidden");
 }
+</script>
+
+<script>
+$("a[href^='http'].icon").each(function() {      
+  $(this).css({          
+     background: "url(http://www.google.com/s2/u/0/favicons?domain=" + this.hostname +
+     ") left center no-repeat", 
+     "padding-left": "20px" 
+  });  
+});
 </script>
 
 <script>
