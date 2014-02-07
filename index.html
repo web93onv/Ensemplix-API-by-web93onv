@@ -48,36 +48,36 @@
     <ul class="nav navbar-nav">
       <li class="active"><a href="http://ens.pavlo.cc/">Информация о игроке</a></li>
       <li class="dropdown">
-        <a href="http://ensemplix.ru" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
+        <a href="http://ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="http://ensemplix.ru">Главная страница</a></li>
+          <li><a href="http://ensemplix.ru" target="_blank">Главная страница</a></li>
           <li class="divider"></li>
-          <li><a href="http://ensemplix.ru/articles/view/1/">Правила сервера</a></li>
-          <li><a href="http://ensemplix.ru/articles/view/6/">Команды сервера</a></li>
-          <li><a href="http://ensemplix.ru/articles/view/3/">Защита территории</a></li>
+          <li><a href="http://ensemplix.ru/articles/view/1/" target="_blank">Правила сервера</a></li>
+          <li><a href="http://ensemplix.ru/articles/view/6/" target="_blank">Команды сервера</a></li>
+          <li><a href="http://ensemplix.ru/articles/view/3/" target="_blank">Защита территории</a></li>
           <li class="divider"></li>
-          <li><a href="http://ensemplix.ru/banlist">Банлист</a></li>
+          <li><a href="http://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
         </ul>
       </li>
       <li class="dropdown">
-        <a href="http://forum.ensemplix.ru" class="dropdown-toggle" data-toggle="dropdown">Форум <b class="caret"></b></a>
+        <a href="http://forum.ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Форум <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="http://forum.ensemplix.ru">Главная страница</a></li>
+          <li><a href="http://forum.ensemplix.ru" target="_blank">Главная страница</a></li>
           <li class="divider"></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=1">Объявления</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=3">Общий раздел</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=4">Помощь</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=6">Книга жалоб и предложений</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=1" target="_blank">Объявления</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=3" target="_blank">Общий раздел</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=4" target="_blank">Помощь</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=6" target="_blank">Книга жалоб и предложений</a></li>
           <li class="divider"></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=20">Sandbox</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=26">HiTech</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=56">Cogito</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=61">Carnage</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=67">Davids</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=109">Amber</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=119">Magnus</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=200">Theos</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=206">Dedal</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=20" target="_blank">Sandbox</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=26" target="_blank">HiTech</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=56" target="_blank">Cogito</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=61" target="_blank">Carnage</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=67" target="_blank">Davids</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=109" target="_blank">Amber</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=119" target="_blank">Magnus</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=200" target="_blank">Theos</a></li>
+          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=206" target="_blank">Dedal</a></li>
         </ul>
       </li>
     </ul>
@@ -447,7 +447,7 @@ regions.callback = function(e) {
         members = [];
         for(var y = 0; y < region.members.length; y++) {
           if(!player_regexp.test(region.members[y])) {
-            members.push("<a href='?player="+region.members[y]+"'>"+region.members[y]+"</a>");
+            members.push("<a href='?player="+region.members[y]+"' target='_blank'>"+region.members[y]+"</a>");
           } else {
             members.push(region.members[y]);
           }
@@ -460,7 +460,7 @@ regions.callback = function(e) {
         owners = [];
         for(var y = 0; y < region.owners.length; y++) {
           if(!player_regexp.test(region.owners[y])) {
-            owners.push("<a href='?player="+region.owners[y]+"'>"+region.owners[y]+"</a>");
+            owners.push("<a href='?player="+region.owners[y]+"' target='_blank'>"+region.owners[y]+"</a>");
           } else {
             owners.push(region.owners[y]);
           }
@@ -556,7 +556,7 @@ blocks.callback = function(e) {
       res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
       
       if(!player_regexp.test(parsed.blocks[x].player)) {
-        res += "<a href='?player="+parsed.blocks[x].player+"'>"+parsed.blocks[x].player+"</a>";
+        res += "<a href='?player="+parsed.blocks[x].player+"' target='_blank'>"+parsed.blocks[x].player+"</a>";
       } else {
         res += parsed.blocks[x].player;
       }
@@ -619,7 +619,7 @@ blocks2.callback = function(e) {
       res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
       
       if(!player_regexp.test(parsed.blocks[x].player)) {
-        res += "<a href='?player="+parsed.blocks[x].player+"'>"+parsed.blocks[x].player+"</a>";
+        res += "<a href='?player="+parsed.blocks[x].player+"' target='_blank'>"+parsed.blocks[x].player+"</a>";
       } else {
         res += parsed.blocks[x].player;
       }
