@@ -163,6 +163,12 @@
         <div class="form-group">
           <input id="blocks_sbmt" type="button" class="btn btn-primary" value="Логи блоков" />
         </div>
+        <div class="form-group">
+          <input id="blocks_id_data" type="text" class="form-control" value="1517:1" placeholder="ID:DATA" />
+        </div>
+        <div class="form-group">
+          <input id="blocks_sbmt2" type="button" class="btn btn-primary" value="Логи блоков" />
+        </div>
       </form>
     </div>
   </div>
@@ -613,7 +619,70 @@ blocks2.callback = function(e) {
     */
     var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
     if(pages > 0) {
-      res += "Страница <select onchange=\"blocks.send('http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]+"&offset='+this.value*100);\">";
+      res += "Страница <select onchange=\"blocks2.send('http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]+"&offset='+this.value*100);\">";
+      for(var x = 0; x <= pages; x++) {
+        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
+          res += "<option value=\""+x+"\" selected>"+x+"</option>";
+        } else if(x == Number(parsed.offset)/100) {
+          res += "<option value=\""+x+"\" selected>"+x+"</option>";
+        } else {
+          res += "<option value=\""+x+"\">"+x+"</option>";
+        }
+      }
+      res += "</select> из "+pages+"<hr>";
+    }
+    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    
+    res += "<table width=\"100%\">";
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
+      
+      if(!player_regexp.test(parsed.blocks[x].player)) {
+        res += "<a href='?player="+parsed.blocks[x].player+"' target='_blank'>"+parsed.blocks[x].player+"</a>";
+      } else {
+        res += parsed.blocks[x].player;
+      }
+      
+      res += "</td><td><span class=\"item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"\"></span> "
+      +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
+      +"<td><span class='transparent'>/tp</span> "+parsed.blocks[x].x+"<span class='transparent'>,</span>"
+      +""+parsed.blocks[x].y+"<span class='transparent'>,</span>"
+      +""+parsed.blocks[x].z+"</td>"
+      +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
+    }
+    res += "</table>"
+    
+    el.innerHTML = res;
+    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+    
+    document.getElementById("blocks").classList.remove("hidden");
+  }
+}
+
+var blocks3 = new request();
+blocks3.callback = function(e) {
+  var el = document.querySelector("#blocks .output");
+  var el_src = document.querySelector("#blocks .source");
+  el.innerHTML = "";
+  el_src.innerHTML = "";
+  
+  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
+    }
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    var res = "";
+    /*
+    "count": 201733,
+    "offset": null,
+    */
+    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
+    if(pages > 0) {
+      res += "Страница <select onchange=\"blocks3.send('http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:"")+"&offset='+this.value*100);\">";
       for(var x = 0; x <= pages; x++) {
         if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
           res += "<option value=\""+x+"\" selected>"+x+"</option>";
@@ -661,6 +730,13 @@ document.addEventListener("click", function(e) {
     document.getElementById("blocks").classList.add("hidden");
     document.getElementById("warps").classList.add("hidden");
     blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]);
+  } else if(e.target.id === "blocks_sbmt2") {
+    document.getElementById("violations").classList.add("hidden");
+    document.getElementById("info").classList.add("hidden");
+    document.getElementById("regions").classList.add("hidden");
+    document.getElementById("blocks").classList.add("hidden");
+    document.getElementById("warps").classList.add("hidden");
+    blocks3.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
   } else if(e.target.id === "player_sbmt") {
     var a = document.querySelectorAll(".output");
     for(var x = 0; x < a.length; x++) {
