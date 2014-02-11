@@ -6,8 +6,8 @@
   <title>Ensemplix API by web93onv</title>
   <meta name="robots" content="noindex,nofollow" />
   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" />
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" />
   <style>
     .source {
       background-color: gray;
@@ -123,19 +123,19 @@
       </div>
       <div class="form-group">
         <div class="btn-group" data-toggle="buttons">
-          <label class="btn btn-primary active">
+          <label class="btn btn-default active">
             <input id="violations_check" type="checkbox" checked /> Нарушения
           </label>
-          <label class="btn btn-primary active">
+          <label class="btn btn-default active">
             <input id="info_check" type="checkbox" checked /> Информация
           </label>
-          <label class="btn btn-primary">
+          <label class="btn btn-default">
             <input id="regions_check" type="checkbox" /> Регионы
           </label>
-          <label class="btn btn-primary">
+          <label class="btn btn-default">
             <input id="warps_check" type="checkbox" /> Варпы
           </label>
-          <label class="btn btn-primary">
+          <label class="btn btn-default">
             <input id="blocks_check" type="checkbox" /> Блоки
           </label>
         </div>
@@ -164,7 +164,7 @@
           <input id="blocks_sbmt" type="button" class="btn btn-primary" value="Логи блоков" />
         </div>
         <div class="form-group">
-          <input id="blocks_id_data" type="text" class="form-control" value="1517:1" placeholder="ID:DATA" />
+          <input id="blocks_id_data" type="text" class="form-control" value="23" placeholder="ID:DATA" />
         </div>
         <div class="form-group">
           <input id="blocks_sbmt2" type="button" class="btn btn-primary" value="Логи блоков" />
@@ -260,6 +260,8 @@ res += "</table>";
 </script>
 
 <script>
+var banned_db = {};
+
 var xmlhttp;
 
 if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
@@ -447,6 +449,47 @@ regions.callback = function(e) {
     }
     
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    
+    var owners_and_members = {};
+    for(var x = 0; x < parsed.regions.length; x++) {
+      var region = parsed.regions[x];
+      if(region.members.length != 0) {
+        for(var y = 0; y < region.members.length; y++) {
+          owners_and_members[region.members[y]] = null;
+        }
+      }
+      if(region.owners.length != 0) {
+        for(var y = 0; y < region.owners.length; y++) {
+          owners_and_members[region.owners[y]] = null;
+        }
+      }
+    }
+    var xmlhttp2;
+    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp2 = new XMLHttpRequest();
+    } else { // code for IE6, IE5
+      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    for(var player in owners_and_members) {
+      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
+      xmlhttp2.send();
+      var banned = JSON.parse(xmlhttp2.responseText).banned;
+      if(banned !== null && banned.till === -1) {
+        var reason = banned.reason;
+        
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
+        } else {
+          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
+        }
+      } else {
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
+        } else {
+          owners_and_members[player] = player;
+        }
+      }
+    }
 
     res += "</div>"
       +"<ul class=\"list-group\">";
@@ -466,9 +509,11 @@ regions.callback = function(e) {
         members = [];
         for(var y = 0; y < region.members.length; y++) {
           if(!player_regexp.test(region.members[y])) {
-            members.push("<a href='?player="+region.members[y]+"' target='_blank'>"+region.members[y]+"</a>");
+            //members.push("<a href='?player="+region.members[y]+"' target='_blank'>"+region.members[y]+"</a>");
+            members.push(owners_and_members[region.members[y]]);
           } else {
-            members.push(region.members[y]);
+            //members.push(region.members[y]);
+            members.push(owners_and_members[region.members[y]]);
           }
         }
         members = members.join(", ");
@@ -479,9 +524,11 @@ regions.callback = function(e) {
         owners = [];
         for(var y = 0; y < region.owners.length; y++) {
           if(!player_regexp.test(region.owners[y])) {
-            owners.push("<a href='?player="+region.owners[y]+"' target='_blank'>"+region.owners[y]+"</a>");
+            //owners.push("<a href='?player="+region.owners[y]+"' target='_blank'>"+region.owners[y]+"</a>");
+            owners.push(owners_and_members[region.owners[y]]);
           } else {
-            owners.push(region.owners[y]);
+            //owners.push(region.owners[y]);
+            owners.push(owners_and_members[region.owners[y]]);
           }
         }
         owners = owners.join(", ");
@@ -570,15 +617,42 @@ blocks.callback = function(e) {
     }
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
+    var owners_and_members = {};
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      owners_and_members[parsed.blocks[x].player] = null;
+    }
+    var xmlhttp2;
+    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp2 = new XMLHttpRequest();
+    } else { // code for IE6, IE5
+      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    for(var player in owners_and_members) {
+      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
+      xmlhttp2.send();
+      var banned = JSON.parse(xmlhttp2.responseText).banned;
+      if(banned !== null && banned.till === -1) {
+        var reason = banned.reason;
+        
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
+        } else {
+          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
+        }
+      } else {
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
+        } else {
+          owners_and_members[player] = player;
+        }
+      }
+    }
+    
     res += "<table width=\"100%\">";
     for(var x = 0; x < parsed.blocks.length; x++) {
       res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
       
-      if(!player_regexp.test(parsed.blocks[x].player)) {
-        res += "<a href='?player="+parsed.blocks[x].player+"' target='_blank'>"+parsed.blocks[x].player+"</a>";
-      } else {
-        res += parsed.blocks[x].player;
-      }
+      res += owners_and_members[parsed.blocks[x].player];
       
       res += "</td><td><span class=\"item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"\"></span> "
       +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
@@ -633,15 +707,42 @@ blocks2.callback = function(e) {
     }
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
+    var owners_and_members = {};
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      owners_and_members[parsed.blocks[x].player] = null;
+    }
+    var xmlhttp2;
+    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp2 = new XMLHttpRequest();
+    } else { // code for IE6, IE5
+      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    for(var player in owners_and_members) {
+      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
+      xmlhttp2.send();
+      var banned = JSON.parse(xmlhttp2.responseText).banned;
+      if(banned !== null && banned.till === -1) {
+        var reason = banned.reason;
+        
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
+        } else {
+          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
+        }
+      } else {
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
+        } else {
+          owners_and_members[player] = player;
+        }
+      }
+    }
+    
     res += "<table width=\"100%\">";
     for(var x = 0; x < parsed.blocks.length; x++) {
       res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
       
-      if(!player_regexp.test(parsed.blocks[x].player)) {
-        res += "<a href='?player="+parsed.blocks[x].player+"' target='_blank'>"+parsed.blocks[x].player+"</a>";
-      } else {
-        res += parsed.blocks[x].player;
-      }
+      res += owners_and_members[parsed.blocks[x].player];
       
       res += "</td><td><span class=\"item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"\"></span> "
       +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
@@ -696,15 +797,42 @@ blocks3.callback = function(e) {
     }
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
+    var owners_and_members = {};
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      owners_and_members[parsed.blocks[x].player] = null;
+    }
+    var xmlhttp2;
+    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp2 = new XMLHttpRequest();
+    } else { // code for IE6, IE5
+      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    for(var player in owners_and_members) {
+      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
+      xmlhttp2.send();
+      var banned = JSON.parse(xmlhttp2.responseText).banned;
+      if(banned !== null && banned.till === -1) {
+        var reason = banned.reason;
+        
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
+        } else {
+          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
+        }
+      } else {
+        if(!player_regexp.test(player)) {
+          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
+        } else {
+          owners_and_members[player] = player;
+        }
+      }
+    }
+    
     res += "<table width=\"100%\">";
     for(var x = 0; x < parsed.blocks.length; x++) {
       res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
       
-      if(!player_regexp.test(parsed.blocks[x].player)) {
-        res += "<a href='?player="+parsed.blocks[x].player+"' target='_blank'>"+parsed.blocks[x].player+"</a>";
-      } else {
-        res += parsed.blocks[x].player;
-      }
+      res += owners_and_members[parsed.blocks[x].player];
       
       res += "</td><td><span class=\"item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"\"></span> "
       +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
