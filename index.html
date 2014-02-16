@@ -103,7 +103,7 @@
 
 <div id="first_time_join" class="alert alert-info fade in hidden">
   <button type="button" class="close" data-dismiss="alert" aria-hidden="true" onclick="localStorage.first_time_join='visited';">×</button>
-  <strong>Здравствуй!</strong> Эта страница предоставляет возможность узнать различную информацию о игроках Minecraft сервера <a href="http://ensemplix.ru" class="alert-link">Ensemplix</a>.
+  <strong>Здравствуй!</strong> Эта страница предоставляет возможность узнать различную информацию об игроках Minecraft сервера <a href="http://ensemplix.ru" class="alert-link">Ensemplix</a>.
 </div>
 
 <div class="panel panel-default">
@@ -164,7 +164,7 @@
           <input id="blocks_sbmt" type="button" class="btn btn-primary" value="Логи блоков" />
         </div>
         <div class="form-group">
-          <input id="blocks_id_data" type="text" class="form-control" value="23" placeholder="ID:DATA" />
+          <input id="blocks_id_data" type="text" class="form-control" value="51" placeholder="ID:DATA" />
         </div>
         <div class="form-group">
           <input id="blocks_sbmt2" type="button" class="btn btn-primary" value="Логи блоков" />
@@ -474,7 +474,7 @@ regions.callback = function(e) {
       xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
       xmlhttp2.send();
       var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null && banned.till === -1) {
+      if(banned !== null) {
         var reason = banned.reason;
         
         if(!player_regexp.test(player)) {
@@ -631,7 +631,7 @@ blocks.callback = function(e) {
       xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
       xmlhttp2.send();
       var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null && banned.till === -1) {
+      if(banned !== null) {
         var reason = banned.reason;
         
         if(!player_regexp.test(player)) {
@@ -721,7 +721,7 @@ blocks2.callback = function(e) {
       xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
       xmlhttp2.send();
       var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null && banned.till === -1) {
+      if(banned !== null) {
         var reason = banned.reason;
         
         if(!player_regexp.test(player)) {
@@ -811,7 +811,7 @@ blocks3.callback = function(e) {
       xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
       xmlhttp2.send();
       var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null && banned.till === -1) {
+      if(banned !== null) {
         var reason = banned.reason;
         
         if(!player_regexp.test(player)) {
