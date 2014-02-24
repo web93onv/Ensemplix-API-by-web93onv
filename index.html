@@ -29,11 +29,6 @@
     }
   </style>
   <link rel="stylesheet" href="blocks_items.css" />
-  <link rel="stylesheet" href="blocks_items_ic.css" />
-  <link rel="stylesheet" href="blocks_items_bc.css" />
-  <link rel="stylesheet" href="blocks_items_forestry.css" />
-  <link rel="stylesheet" href="blocks_items_compactwindmills.css" />
-  <link rel="stylesheet" href="blocks_items_iron_chest.css" />
 </head>
 <body>
 
@@ -260,7 +255,100 @@ res += "</table>";
 </script>
 
 <script>
-var banned_db = {};
+function pagination(parsed, page, pages, url, fnc) {
+  var res = "";
+  
+  pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
+  page = ((Number(parsed.offset)/100)|0);
+  
+  if(page-1 > 0) {
+    res += "<input type='button' value='&#60;&#60;' onclick=\""+fnc+"('"+url+"&offset=0');\"> ";
+  }
+  
+  if(page > 0) {
+    res += "<input type='button' value='&#60;' onclick=\""+fnc+"('"+url+"&offset="+(page-1)*100+"');\"> ";
+  }
+  
+  if(pages > 0) {
+    res += "<select onchange=\""+fnc+"('"+url+"&offset='+this.value*100);\">";
+    for(var x = 0; x <= pages; x++) {
+      if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
+        res += "<option value=\""+x+"\" selected>"+x+"</option>";
+      } else if(x == Number(parsed.offset)/100) {
+        res += "<option value=\""+x+"\" selected>"+x+"</option>";
+      } else {
+        res += "<option value=\""+x+"\">"+x+"</option>";
+      }
+    }
+    res += "</select> / " + pages + " ";
+  }
+  
+  if(page < pages) {
+    res += "<input type='button' value='&#62;' onclick=\""+fnc+"('"+url+"&offset="+(page+1)*100+"');\"> ";
+  }
+  
+  if(page+1 < pages) {
+    res += "<input type='button' value='&#62;&#62;' onclick=\""+fnc+"('"+url+"&offset="+pages*100+"');\">";
+  }
+  
+  return res;
+}
+
+var players_db = {};
+
+function player_create(e) {
+  var xmlhttp;
+  if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
+    xmlhttp = new XMLHttpRequest();
+  } else { // code for IE6, IE5
+    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+  }
+  //for(var player in owners_and_members) {
+    xmlhttp.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+e, false);
+    xmlhttp.send();
+    var banned = JSON.parse(xmlhttp.responseText).banned;
+    if(banned !== null) {
+      players_db[e] = banned;
+    } else {
+      players_db[e] = null;
+    }
+  //}
+  return players_db[e];
+}
+
+function player_link(e) {
+  if(typeof e == "string") {
+    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    
+    if(typeof players_db[e] == "undefined") {
+      player_create(e);
+    }
+    
+    if(players_db[e] == null) {
+      if(player_regexp.test(e)) {
+        return e;
+      } else {
+        return "<a href='?player="+e+"' target='_blank'>"+e+"</a>";
+      }
+    } else {
+      if(players_db[e].till == -1) {
+        if(player_regexp.test(e)) {
+          return e+" <span class='label label-danger' <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
+        } else {
+          return "<span class='bg-danger text-danger'><a href='?player="+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
+        }
+      } else {
+        if(player_regexp.test(e)) {
+          return e+" <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
+        } else {
+          return "<span class='bg-danger text-danger'><a href='?player="+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
+        }
+      }
+    }
+  } else if(typeof e == "object") {
+    
+  }
+}
 
 var xmlhttp;
 
@@ -429,24 +517,10 @@ regions.callback = function(e) {
     }
     var parsed = JSON.parse(xmlhttp.responseText);
     
-    var res = "<div class=\"panel panel-default\">"
-      +"<div class=\"panel-body\">"
-        +"Регионы игрока "+player_input.value;
-
-    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
-    if(pages > 0) {
-      res += ". Страница <select onchange=\"regions.send('http://api.ensemplix.ru/v2/regions/player/?player='+player_input.value+'&offset='+this.value*100);\">";
-      for(var x = 0; x <= pages; x++) {
-        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
-          res += "<option selected>"+x+"</option>";
-        } else if(x == Number(parsed.offset)/100) {
-          res += "<option selected>"+x+"</option>";
-        } else {
-          res += "<option>"+x+"</option>";
-        }
-      }
-      res += "</select> из "+pages;
-    }
+    var res = "<div class=\"panel panel-default\">";
+    
+    var pages_list = pagination(parsed,undefined,undefined,"http://api.ensemplix.ru/v2/regions/player/?player="+player_input.value,"regions.send");
+    res += "<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>Регионы игрока "+player_input.value+"<br>"+pages_list+"</div>";
     
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
@@ -464,35 +538,11 @@ regions.callback = function(e) {
         }
       }
     }
-    var xmlhttp2;
-    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp2 = new XMLHttpRequest();
-    } else { // code for IE6, IE5
-      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
-    }
     for(var player in owners_and_members) {
-      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
-      xmlhttp2.send();
-      var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null) {
-        var reason = banned.reason;
-        
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
-        } else {
-          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
-        }
-      } else {
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
-        } else {
-          owners_and_members[player] = player;
-        }
-      }
+      owners_and_members[player] = player_link(player);
     }
 
-    res += "</div>"
-      +"<ul class=\"list-group\">";
+    res += "<ul class=\"list-group\">";
     for(var x = 0; x < parsed.regions.length; x++) {
       var region = parsed.regions[x];
       var xlength = Math.abs(region.min_x - region.max_x);
@@ -508,13 +558,7 @@ regions.callback = function(e) {
       if(region.members.length != 0) {
         members = [];
         for(var y = 0; y < region.members.length; y++) {
-          if(!player_regexp.test(region.members[y])) {
-            //members.push("<a href='?player="+region.members[y]+"' target='_blank'>"+region.members[y]+"</a>");
-            members.push(owners_and_members[region.members[y]]);
-          } else {
-            //members.push(region.members[y]);
-            members.push(owners_and_members[region.members[y]]);
-          }
+          members.push(owners_and_members[region.members[y]]);
         }
         members = members.join(", ");
       }
@@ -523,13 +567,7 @@ regions.callback = function(e) {
       if(region.owners.length != 0) {
         owners = [];
         for(var y = 0; y < region.owners.length; y++) {
-          if(!player_regexp.test(region.owners[y])) {
-            //owners.push("<a href='?player="+region.owners[y]+"' target='_blank'>"+region.owners[y]+"</a>");
-            owners.push(owners_and_members[region.owners[y]]);
-          } else {
-            //owners.push(region.owners[y]);
-            owners.push(owners_and_members[region.owners[y]]);
-          }
+          owners.push(owners_and_members[region.owners[y]]);
         }
         owners = owners.join(", ");
       }
@@ -542,7 +580,7 @@ regions.callback = function(e) {
         +"<b>Дата создания:</b> "+timeToHuman(region.created)+"</li>";
     }
     res += "</ul>"
-+"</div>"
++"<div class='panel-body' style='border-top: 1px solid #E2E2E2;'>"+pages_list+"</div></div>"
         
     el.innerHTML = res;
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
@@ -602,50 +640,19 @@ blocks.callback = function(e) {
     "offset": null,
     */
     var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
-    if(pages > 0) {
-      res += "Страница <select onchange=\"blocks.send('http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value+"&offset='+this.value*100);\">";
-      for(var x = 0; x <= pages; x++) {
-        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
-          res += "<option value=\""+x+"\" selected>"+x+"</option>";
-        } else if(x == Number(parsed.offset)/100) {
-          res += "<option value=\""+x+"\" selected>"+x+"</option>";
-        } else {
-          res += "<option value=\""+x+"\">"+x+"</option>";
-        }
-      }
-      res += "</select> из "+pages+"<hr>";
-    }
+    var page = ((Number(parsed.offset)/100)|0);
+    
+    console.log("((parsed.count/100)|0) "+((parsed.count/100)|0));
+    console.log("((Number(parsed.offset)/100)|0) "+((Number(parsed.offset)/100)|0));
+    
+    var pages_list = pagination(parsed,page,pages,"http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value,"blocks.send");
+    res += pages_list+"<hr>";
+    
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
     var owners_and_members = {};
     for(var x = 0; x < parsed.blocks.length; x++) {
-      owners_and_members[parsed.blocks[x].player] = null;
-    }
-    var xmlhttp2;
-    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp2 = new XMLHttpRequest();
-    } else { // code for IE6, IE5
-      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    for(var player in owners_and_members) {
-      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
-      xmlhttp2.send();
-      var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null) {
-        var reason = banned.reason;
-        
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
-        } else {
-          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
-        }
-      } else {
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
-        } else {
-          owners_and_members[player] = player;
-        }
-      }
+      owners_and_members[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
     }
     
     res += "<table width=\"100%\">";
@@ -661,7 +668,7 @@ blocks.callback = function(e) {
       +""+parsed.blocks[x].z+"</td>"
       +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
     }
-    res += "</table>"
+    res += "</table><hr>"+pages_list;
     
     el.innerHTML = res;
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
@@ -691,51 +698,12 @@ blocks2.callback = function(e) {
     "count": 201733,
     "offset": null,
     */
-    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
-    if(pages > 0) {
-      res += "Страница <select onchange=\"blocks2.send('http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]+"&offset='+this.value*100);\">";
-      for(var x = 0; x <= pages; x++) {
-        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
-          res += "<option value=\""+x+"\" selected>"+x+"</option>";
-        } else if(x == Number(parsed.offset)/100) {
-          res += "<option value=\""+x+"\" selected>"+x+"</option>";
-        } else {
-          res += "<option value=\""+x+"\">"+x+"</option>";
-        }
-      }
-      res += "</select> из "+pages+"<hr>";
-    }
-    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    var pages_list = pagination(parsed,undefined,undefined,"http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1],"blocks2.send");
+    res += pages_list;
     
     var owners_and_members = {};
     for(var x = 0; x < parsed.blocks.length; x++) {
-      owners_and_members[parsed.blocks[x].player] = null;
-    }
-    var xmlhttp2;
-    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp2 = new XMLHttpRequest();
-    } else { // code for IE6, IE5
-      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    for(var player in owners_and_members) {
-      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
-      xmlhttp2.send();
-      var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null) {
-        var reason = banned.reason;
-        
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
-        } else {
-          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
-        }
-      } else {
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
-        } else {
-          owners_and_members[player] = player;
-        }
-      }
+      owners_and_members[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);;
     }
     
     res += "<table width=\"100%\">";
@@ -781,51 +749,12 @@ blocks3.callback = function(e) {
     "count": 201733,
     "offset": null,
     */
-    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
-    if(pages > 0) {
-      res += "Страница <select onchange=\"blocks3.send('http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:"")+"&offset='+this.value*100);\">";
-      for(var x = 0; x <= pages; x++) {
-        if(x == 0 && (parsed.offset == 0 || parsed.offset == null)) {
-          res += "<option value=\""+x+"\" selected>"+x+"</option>";
-        } else if(x == Number(parsed.offset)/100) {
-          res += "<option value=\""+x+"\" selected>"+x+"</option>";
-        } else {
-          res += "<option value=\""+x+"\">"+x+"</option>";
-        }
-      }
-      res += "</select> из "+pages+"<hr>";
-    }
-    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    var pages_list = pagination(parsed,undefined,undefined,"http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1],"blocks2.send");
+    res += pages_list;
     
     var owners_and_members = {};
     for(var x = 0; x < parsed.blocks.length; x++) {
-      owners_and_members[parsed.blocks[x].player] = null;
-    }
-    var xmlhttp2;
-    if(window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp2 = new XMLHttpRequest();
-    } else { // code for IE6, IE5
-      xmlhttp2 = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    for(var player in owners_and_members) {
-      xmlhttp2.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+player, false);
-      xmlhttp2.send();
-      var banned = JSON.parse(xmlhttp2.responseText).banned;
-      if(banned !== null) {
-        var reason = banned.reason;
-        
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<span class='bg-danger text-danger'><a href='?player="+player+"' style='color:inherit;' target='_blank'>"+player+" ["+reason+"]</a></span>";
-        } else {
-          owners_and_members[player] = "<span class='bg-danger text-danger'>"+player+" ["+reason+"]</span>";
-        }
-      } else {
-        if(!player_regexp.test(player)) {
-          owners_and_members[player] = "<a href='?player="+player+"' target='_blank'>"+player+"</a>";
-        } else {
-          owners_and_members[player] = player;
-        }
-      }
+      owners_and_members[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
     }
     
     res += "<table width=\"100%\">";
