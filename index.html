@@ -328,20 +328,20 @@ function player_link(e) {
       if(player_regexp.test(e)) {
         return e;
       } else {
-        return "<a href='?player="+e+"' target='_blank'>"+e+"</a>";
+        return "<a href='#"+e+"' target='_blank'>"+e+"</a>";
       }
     } else {
       if(players_db[e].till == -1) {
         if(player_regexp.test(e)) {
           return e+" <span class='label label-danger' <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
         } else {
-          return "<span class='bg-danger text-danger'><a href='?player="+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
+          return "<span class='bg-danger text-danger'><a href='#"+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
         }
       } else {
         if(player_regexp.test(e)) {
           return e+" <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
         } else {
-          return "<span class='bg-danger text-danger'><a href='?player="+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
+          return "<span class='bg-danger text-danger'><a href='#"+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
         }
       }
     }
@@ -437,11 +437,39 @@ info.callback = function(e) {
       }
     }
     
+    var lvl = "Огурец";
+    switch (parsed.level) {
+      case 1:
+        lvl = "Игрок";
+        break;
+      case 2:
+        lvl = "Power-Player";
+        break;
+      case 3:
+        lvl = "VIP";
+        break;
+      case 4:
+        lvl = "Super-VIP";
+        break;
+      case 5:
+        lvl = "Модератор";
+        break;
+      case 6:
+        lvl = "Администратор";
+        break;
+      case 7:
+        lvl = "Супер Администратор :3";
+        break;
+    }
+    
     var res2 = ""
+      +""+parsed.player+", <b>"+lvl+"</b><br/>"
+      +"<img style='max-height:200px;' alt='Аватар' title='Аватара на сайте' src=\""+parsed.logo_url+"\" class=\"img-thumbnail\"/> "
+      +"<a class='img-thumbnail' target='_blank' href='http://enskins.ru/"+parsed.player+".png' title='Открыть скин в новой вкладке'><img class='zozok' width='150' height='150' data-src='http://enskins.ru/"+parsed.player+".png' onerror='this.parentNode.parentNode.removeChild(this.parentNode);'/></a> "
+      +"<a class='img-thumbnail' target='_blank' href='http://enskins.ru/Cloaks/"+parsed.player+".png' title='Открыть плащ в новой вкладке'><img class='zozok' width='150' height='150' data-src='http://enskins.ru/Cloaks/"+parsed.player+".png' onerror='this.parentNode.parentNode.removeChild(this.parentNode);'/></a><br/><br/>"
       +"<p style=\"position:absolute;color:white;font-family:'Minecraft';font-size:16px;\">&nbsp;"+resA+"</p>"
       +"<p style=\"padding:2px 0 0 2px;background-color:#444;color:white;font-family:'Minecraft';font-size:16px;\">&nbsp;"+resB+"</p>"
-      +"<img src=\""+parsed.logo_url+"\" class=\"img-thumbnail\"><br>"
-      +"<b>"+parsed.player+"</b> достиг <b>"+parsed.level+"</b> уровеня волшебства<br>"
+      +((parsed.clan!=null)?"Клан: <b>"+parsed.clan+"</b><br/>":"")
       +"Имущество: <b>"+parsed.coins+" койн</b><br>"
       +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b><br>"
       +"Последний раз был на сайте: <b>"+timeToHuman(parsed.last_online)+"</b>";
@@ -450,6 +478,8 @@ info.callback = function(e) {
     el_src.innerHTML = JSON.stringify(parsed,undefined,2);
     
     document.getElementById("info").classList.remove("hidden");
+    
+    ozozolka();
   }
 }
 
@@ -795,6 +825,7 @@ document.addEventListener("click", function(e) {
     document.getElementById("warps").classList.add("hidden");
     blocks3.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
   } else if(e.target.id === "player_sbmt") {
+    history.replaceState("", document.title, window.location.pathname + "#" + player_input.value);
     var a = document.querySelectorAll(".output");
     for(var x = 0; x < a.length; x++) {
       a[x].innerHTML = "";
@@ -846,7 +877,14 @@ function getParameterByName(name) {
     return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
-var player = getParameterByName("player");
+var playerGET = getParameterByName("player");
+var player = location.hash.substr(1);
+
+if(playerGET != "") {
+  player_input.value = playerGET;
+  history.replaceState("", document.title, window.location.pathname);
+  player_sbmt.click();
+}
 
 if(player != "") {
   player_input.value = player;
@@ -856,6 +894,32 @@ if(player != "") {
 var ls = localStorage;
 if(ls["first_time_join"] == undefined) {
   document.getElementById("first_time_join").classList.toggle("hidden");
+}
+
+function ozozolka() {
+  var a = document.querySelectorAll(".zozok");
+  for(var x = 0; x < a.length; x++) {
+    a[x].classList.remove("zozok");
+    a[x].setAttribute("style","background-image:url('"+a[x].getAttribute("data-src")+"');"
+      + "background-position:center;"
+      + "background-repeat:no-repeat;");
+    a[x].setAttribute("src",a[x].getAttribute("data-src"));
+    
+    a[x].onmousemove = function (e) {
+      e.target.style.backgroundPosition = (e.offsetX/e.target.height)*100+"% "
+        + (e.offsetY/e.target.width)*100+"%";
+    };
+    a[x].onmouseout = function (e) {
+      //e.target.style.backgroundPosition = "center";
+    };
+    a[x].onload = function (e) {
+      if(this.naturalWidth <= this.width && this.naturalHeight <= this.height) {
+        this.onmousemove = function () { return false; };
+        this.onmouseout = function () { return false; };
+      }
+      this.removeAttribute("src");
+    };
+  }
 }
 </script>
 
