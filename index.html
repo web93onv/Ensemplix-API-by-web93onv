@@ -28,10 +28,34 @@
       font-style: normal;
     }
   </style>
+  <style>
+    html,
+    body {
+      height: 100%;
+      /* The html and body elements cannot have any padding or margin. */
+    }
+
+    /* Wrapper for page content to push down footer */
+    #wrap {
+      min-height: 100%;
+      height: auto;
+      /* Negative indent footer by its height */
+      margin: 0 auto -60px;
+      /* Pad bottom by footer height */
+      padding: 0 0 60px;
+    }
+
+    /* Set the fixed height of the footer here */
+    #footer {
+      height: 60px;
+      background-color: #f5f5f5;
+    }
+  </style>
   <link rel="stylesheet" href="blocks_items.css" />
 </head>
 <body>
 
+<div id="wrap">
 <div class="container" style="padding-top:20px;">
 
 <nav class="navbar navbar-default" role="navigation">
@@ -103,6 +127,84 @@
 
 <div class="panel panel-default">
   <div class="panel-body">
+    <!-- Button trigger modal -->
+    <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#banlist">
+      Банлист
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="banlist" tabindex="-1" role="dialog" aria-labelledby="banlist_label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="banlist_label">Банлист</h4>
+          </div>
+          <div id="banlist_list" class="modal-body">
+            <script>
+            $.ajax({
+              url: "http://api.ensemplix.ru/v2/server/bans",
+              cache: false,
+              success: function(parsed){
+                var res = "<table>";
+                for(var x = 0; x < parsed.bans.length; x++) {
+                  res += "<tr><td>"+player_link(parsed.bans[x])+"</td><td>"+player_link(parsed.bans[x].admin)+"</td></tr>";
+                }
+                res += "</table>";
+                $("#banlist_list").append(res);
+              }
+            });
+            </script>
+          </div>
+          <div class="modal-footer">
+            <a href="https://ensemplix.ru/banlist" target="_blank" class="btn btn-primary" title="Открыть банлист на сайте">Открыть банлист</a>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Button trigger modal -->
+    <button class="btn btn-primary btn-xs" data-toggle="modal" data-target="#serverlist">
+      Список серверов
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="serverlist" tabindex="-1" role="dialog" aria-labelledby="serverlist_label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="serverlist_label">Список серверов</h4>
+          </div>
+          <div id="serverlist_list" class="modal-body">
+            <script>
+            $.ajax({
+              url: "http://api.ensemplix.ru/v2/server/game",
+              cache: false,
+              success: function(parsed){
+                var res = "<table class='table' style='margin-bottom:0;'>";
+                for(var x = 0; x < parsed.length; x++) {
+                  res += "<tr><td>"+parsed[x].name+"</td>";
+                  res += "<td width='100%'><div class='progress' style='margin-bottom:0;'>"
+                      + "<div class='progress-bar' role='progressbar' aria-valuenow='"+parsed[x].players+"' aria-valuemin='0' aria-valuemax='"+parsed[x].maximum+"' style='width: "+parsed[x].players+"%;'></div>"
+                    + "</div></td><td>"+parsed[x].players+"/"+parsed[x].maximum+"</td></tr>";
+                }
+                res += "</table>";
+                $("#serverlist_list").append(res);
+              }
+            });
+            </script>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <hr style="margin:10px 0;"/>
+    
     <form class="form-inline">
       <div class="form-group">
         <a href="#" class="btn btn-default" onclick="document.getElementById('blocks_input').classList.toggle('hidden');return false;">
@@ -137,10 +239,10 @@
       </div>
     </form>
     <div id="blocks_input" class="hidden">
-      <hr>
+      <hr style="margin:10px 0;"/>
       <form class="form-inline">
         <div class="form-group">
-          <input id="blocks_x_z" type="text" class="form-control" value="0,0" placeholder="x,z" />
+          <input id="blocks_x_z" type="text" class="form-control" value="0,0" placeholder="<x>,[y],<z>" />
         </div>
         <div class="form-group">
           <select id="blocks_world" class="form-control">
@@ -151,15 +253,15 @@
             <option value="AmberR4">Amber</option>
             <option value="DedalR2">Dedal</option>
             <option value="HiTech152">HiTech</option>
-            <option value="Davids152" selected>Davids</option>
+            <option value="Davids152">Davids</option>
             <option value="Magnus152">Magnus</option>
-          <select>
+          </select>
         </div>
         <div class="form-group">
           <input id="blocks_sbmt" type="button" class="btn btn-primary" value="Логи блоков" />
         </div>
         <div class="form-group">
-          <input id="blocks_id_data" type="text" class="form-control" value="51" placeholder="ID:DATA" />
+          <input id="blocks_id_data" type="text" class="form-control" value="51" placeholder="<id>:[data]" />
         </div>
         <div class="form-group">
           <input id="blocks_sbmt2" type="button" class="btn btn-primary" value="Логи блоков" />
@@ -183,7 +285,7 @@
 <div id="info" class="hidden"><h2>Информация</h2>
   <div class="row">
     <div class="col-md-8">
-      <pre class="panel-body output"></pre>
+      <div class="output"></div>
     </div>
     <div class="col-md-4">
       <pre class="source"></pre>
@@ -205,7 +307,7 @@
 <div id="warps" class="hidden"><h2>Варпы</h2>
   <div class="row">
     <div class="col-md-8">
-      <pre class="output"></pre>
+      <div class="output"></div>
     </div>
     <div class="col-md-4">
       <pre class="source"></pre>
@@ -216,7 +318,7 @@
 <div id="blocks" class="hidden"><h2>Блоки</h2>
   <div class="row">
     <div class="col-md-9">
-      <pre class="output"></pre>
+      <div class="output"></div>
     </div>
     <div class="col-md-3">
       <pre class="source"></pre>
@@ -224,6 +326,13 @@
   </div>
 </div>
 
+</div>
+</div>
+
+<div id="footer">
+  <div class="container">
+    <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2014</p>
+  </div>
 </div>
 
 <script>
@@ -256,18 +365,18 @@ var formats = [
 </script>
 
 <script>
-function pagination(parsed, page, pages, url, fnc) {
+function pagination(parsed, url, fnc) {
   var res = "";
   
-  pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
-  page = ((Number(parsed.offset)/100)|0);
+  var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
+  var page = ((Number(parsed.offset)/100)|0);
   
   if(page-1 > 0) {
-    res += "<input type='button' value='&#60;&#60;' onclick=\""+fnc+"('"+url+"&offset=0');\"> ";
+    res += "<input type='button' value='&#60;&#60;' onclick=\""+fnc+"('"+url+"&offset=0');\"/> ";
   }
   
   if(page > 0) {
-    res += "<input type='button' value='&#60;' onclick=\""+fnc+"('"+url+"&offset="+(page-1)*100+"');\"> ";
+    res += "<input type='button' value='&#60;' onclick=\""+fnc+"('"+url+"&offset="+(page-1)*100+"');\"/> ";
   }
   
   if(pages > 0) {
@@ -285,11 +394,11 @@ function pagination(parsed, page, pages, url, fnc) {
   }
   
   if(page < pages) {
-    res += "<input type='button' value='&#62;' onclick=\""+fnc+"('"+url+"&offset="+(page+1)*100+"');\"> ";
+    res += "<input type='button' value='&#62;' onclick=\""+fnc+"('"+url+"&offset="+(page+1)*100+"');\"/> ";
   }
   
   if(page+1 < pages) {
-    res += "<input type='button' value='&#62;&#62;' onclick=\""+fnc+"('"+url+"&offset="+pages*100+"');\">";
+    res += "<input type='button' value='&#62;&#62;' onclick=\""+fnc+"('"+url+"&offset="+pages*100+"');\"/>";
   }
   
   return res;
@@ -314,9 +423,9 @@ function player_create(e) {
 }
 
 function player_link(e) {
+  var player_regexp = RegExp("^"+player_input.value+"$", "i");
+  
   if(typeof e == "string") {
-    var player_regexp = RegExp("^"+player_input.value+"$", "i");
-    
     if(typeof players_db[e] == "undefined") {
       player_create(e);
     }
@@ -343,7 +452,19 @@ function player_link(e) {
       }
     }
   } else if(typeof e == "object") {
-    
+      if(e.till == -1) {
+        if(player_regexp.test(e.player)) {
+          return e.player+" <span class='label label-danger' <span class='label label-danger' title='Этот игрок в вечном бане!'>"+e.reason+"</span>";
+        } else {
+          return "<span class='bg-danger text-danger'><a href='#"+e.player+"' style='color:inherit;' target='_blank'>"+e.player+"</a></span> <span class='label label-danger' title='Этот игрок в вечном бане!'>"+e.reason+"</span>";
+        }
+      } else {
+        if(player_regexp.test(e.player)) {
+          return e.player+" <span class='label label-warning' title='Этот игрок временно забанен'>"+e.reason+"</span>";
+        } else {
+          return "<span class='bg-danger text-danger'><a href='#"+e.player+"' style='color:inherit;' target='_blank'>"+e.player+"</a></span> <span class='label label-warning' title='Этот игрок временно забанен'>"+e.reason+"</span>";
+        }
+      }
   }
 }
 
@@ -388,14 +509,24 @@ info.callback = function(e) {
   el.innerHTML = "";
   el_src.innerHTML = "";
   
-  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+  if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
       JSON.parse(xmlhttp.responseText);
     } catch(err) {
       el.innerHTML = "error";
       return;
     }
+    var parsed_JSON = JSON.parse(xmlhttp.responseText);
     var parsed = JSON.parse(xmlhttp.responseText)[0];
+    
+    if(parsed === undefined || parsed.level === undefined) {
+      el.innerHTML = "<div class='alert alert-danger'><b>Ошибка</b>. Информация не обнаружена.</div>";
+      el_src.innerHTML = JSON.stringify(parsed_JSON,undefined,2);
+      
+      document.getElementById("info").classList.remove("hidden");
+      
+      return false;
+    };
     
     var levelcolor = ((parsed.level==null)||(parsed.level==undefined)?"":parsed.level==2?"§3":parsed.level==3?"§6":parsed.level==4?"§9":parsed.level==5?"§e":parsed.level>=6?"§c":"");
     var namecolor = (parsed.name_color!=null?"§"+parsed.name_color:"");
@@ -458,7 +589,7 @@ info.callback = function(e) {
       +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b><br/>"
       +"Последний раз был на сайте: <b>"+timeToHuman(parsed.last_online)+"</b>";
     
-    el.innerHTML = res2;
+    el.innerHTML = "<pre>"+res2+"</pre>";
     el_src.innerHTML = JSON.stringify(parsed,undefined,2);
     
     document.getElementById("info").classList.remove("hidden");
@@ -522,7 +653,7 @@ regions.callback = function(e) {
   el.innerHTML = "";
   el_src.innerHTML = "";
   
-  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+  if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
       JSON.parse(xmlhttp.responseText);
     } catch(err) {
@@ -531,48 +662,67 @@ regions.callback = function(e) {
     }
     var parsed = JSON.parse(xmlhttp.responseText);
     
-    var res = "<div class='panel panel-default'>";
+    if(parsed.error !== undefined) {
+      el.innerHTML = "<div class='alert alert-info'>"+parsed.error+"</div>";
+      el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+      
+      document.getElementById("regions").classList.remove("hidden");
+      
+      return false;
+    }
     
-    var pages_list = pagination(parsed,undefined,undefined,"http://api.ensemplix.ru/v2/regions/player/?player="+player_input.value,"regions.send");
-    res += "<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>Регионы игрока "+player_input.value+"<br>"+pages_list+"</div>";
+    // пагинация
+    var pages_list = pagination(parsed,"http://api.ensemplix.ru/v2/regions/player/?player="+player_input.value,"regions.send");
     
+    // подсветка забаненых
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
-    var owners_and_members = {};
+    var banned_status = {};
     for(var x = 0; x < parsed.regions.length; x++) {
       var region = parsed.regions[x];
       if(region.members.length != 0) {
         for(var y = 0; y < region.members.length; y++) {
-          owners_and_members[region.members[y]] = null;
+          banned_status[region.members[y]] = null;
         }
       }
       if(region.owners.length != 0) {
         for(var y = 0; y < region.owners.length; y++) {
-          owners_and_members[region.owners[y]] = null;
+          banned_status[region.owners[y]] = null;
         }
       }
     }
-    for(var player in owners_and_members) {
-      owners_and_members[player] = player_link(player);
+    for(var player in banned_status) {
+      banned_status[player] = player_link(player);
     }
-
-    res += "<ul class='list-group'>";
+    
+    // список регионов
+    var regions_list = "";
     for(var x = 0; x < parsed.regions.length; x++) {
       var region = parsed.regions[x];
+      
+      // длина региона, минимальная точка на оси x, средняя точка на оси x
       var xlength = Math.abs(region.min_x - region.max_x);
       var xmin = Math.min(region.min_x, region.max_x);
+      var xcenter = ((xmin + xlength/2)|0);
       
+      // ширина региона, минимальная точка на оси z, средняя точка на оси z
       var zlength = Math.abs(region.min_z - region.max_z);
       var zmin = Math.min(region.min_z, region.max_z);
+      var zcenter = ((zmin + zlength/2)|0);
       
-      var ylength = Math.max(region.min_y, region.max_y)-Math.min(region.min_y, region.max_y);
-      var ycenter = ((Math.min(region.min_y, region.max_y)+ylength/2)|0);
+      // высота региона, минимальная точка на оси y, средняя точка
+      var ylength = Math.max(region.min_y, region.max_y) - Math.min(region.min_y, region.max_y);
+      var ymin = Math.min(region.min_y, region.max_y);
+      var ycenter = ((ymin + ylength/2)|0);
+      
+      // объем региона
+      var region_volume = (xlength+1)*(ylength+1)*(zlength+1);
       
       var members = "";
       if(region.members.length != 0) {
         members = [];
         for(var y = 0; y < region.members.length; y++) {
-          members.push(owners_and_members[region.members[y]]);
+          members.push(banned_status[region.members[y]]);
         }
         members = members.join(", ");
       }
@@ -581,21 +731,33 @@ regions.callback = function(e) {
       if(region.owners.length != 0) {
         owners = [];
         for(var y = 0; y < region.owners.length; y++) {
-          owners.push(owners_and_members[region.owners[y]]);
+          owners.push(banned_status[region.owners[y]]);
         }
         owners = owners.join(", ");
       }
       
-      res += "<li class='list-group-item'><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>, /tp "+((Math.min(region.min_x, region.max_x)+Math.abs(region.min_x - region.max_x)/2)|0)+","+ycenter+","+((Math.min(region.min_z, region.max_z)+Math.abs(region.min_z - region.max_z)/2)|0)+"<br>"
+      regions_list += "<li class='list-group-item'><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>, /tp "+xcenter+","+ycenter+","+zcenter+"<br>"
         +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br>":"")
         +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br>":"")
         +(region.flags.length==0?"":"<b>Флаги:</b> "+region.flags.join(", ")+"<br>")
-        +"<b>Объем:</b> "+(xlength+1)+"&times;"+(ylength+1)+"&times;"+(zlength+1)+" = "+((xlength+1)*(zlength+1)*(ylength+1))+"<br>"
+        +"<b>Объем:</b> "+(xlength+1)+"&times;"+(ylength+1)+"&times;"+(zlength+1)+" = "+region_volume+"<br>"
         +"<b>Дата создания:</b> "+timeToHuman(region.created)+"</li>";
     }
-    res += "</ul>"
-      +"<div class='panel-body' style='border-top: 1px solid #E2E2E2;'>"+pages_list+"</div></div>"
-        
+    regions_list = "<ul class='list-group'>"+regions_list+"</ul>";
+    
+    if(pages_list === "") {
+      var res = "<div class='panel panel-default'>"
+      +"<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>Регионы игрока "+player_input.value+"</div>"
+      +regions_list
+      +"</div>"
+    } else {
+      var res = "<div class='panel panel-default'>"
+      +"<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>Регионы игрока "+player_input.value+"<br/>"+pages_list+"</div>"
+      +regions_list
+      +"<div class='panel-body' style='border-top: 1px solid #E2E2E2;'>"+pages_list+"</div>"
+      +"</div>"
+    }
+    
     el.innerHTML = res;
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
     
@@ -610,7 +772,7 @@ warps.callback = function(e) {
   el.innerHTML = "";
   el_src.innerHTML = "";
   
-  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+  if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
       JSON.parse(xmlhttp.responseText);
     } catch(err) {
@@ -619,17 +781,30 @@ warps.callback = function(e) {
     }
     var parsed = JSON.parse(xmlhttp.responseText);
     
-    var res = "<table width='100%'>";
+    if(parsed.error !== undefined) {
+      el.innerHTML = "<div class='alert alert-info'>"+parsed.error+"</div>";
+      el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+      
+      document.getElementById("warps").classList.remove("hidden");
+      
+      return false;
+    }
+    
+    var res = "";
     for(var x = 0; x < parsed.warps.length; x++) {
       res += "<tr><td>"+parsed.warps[x].world+"</td><td>/warp "+parsed.warps[x].warp+"</td><td>"+timeToHuman(parsed.warps[x].created)+"</td></tr>";
     }
-    res += "</table>"
+    res = "<pre><table width='100%'>"+res+"</table></pre>"
     
     el.innerHTML = res;
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
     
     document.getElementById("warps").classList.remove("hidden");
   }
+}
+
+function block_html_image(block_id, block_data) {
+  return "<span class='item item_"+block_id+" item_"+block_id+"_"+block_data+"'></span>"
 }
 
 var blocks = new request();
@@ -639,7 +814,7 @@ blocks.callback = function(e) {
   el.innerHTML = "";
   el_src.innerHTML = "";
   
-  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+  if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
       JSON.parse(xmlhttp.responseText);
     } catch(err) {
@@ -648,39 +823,94 @@ blocks.callback = function(e) {
     }
     var parsed = JSON.parse(xmlhttp.responseText);
     
-    var res = "";
-    var pages = ((parsed.count/100)|0)+((Number(parsed.offset)/100)|0);
-    var page = ((Number(parsed.offset)/100)|0);
+    if(parsed.error !== undefined) {
+      el.innerHTML = "<div class='alert alert-info'>"+parsed.error+"</div>";
+      el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+      
+      document.getElementById("blocks").classList.remove("hidden");
+      
+      return false;
+    }
     
-    console.log("((parsed.count/100)|0) "+((parsed.count/100)|0));
-    console.log("((Number(parsed.offset)/100)|0) "+((Number(parsed.offset)/100)|0));
+    // пагинация
+    var pages_list = pagination(parsed,"http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value,"blocks.send");
     
-    var pages_list = pagination(parsed,page,pages,"http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value,"blocks.send");
-    res += pages_list+"<hr>";
-    
+    // подсветка забаненых
     var player_regexp = RegExp("^"+player_input.value+"$", "i");
     
-    var owners_and_members = {};
+    var banned_status = {};
     for(var x = 0; x < parsed.blocks.length; x++) {
-      owners_and_members[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
+      banned_status[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
     }
     
-    res += "<table width='100%'>";
-    for(var x = 0; x < parsed.blocks.length; x++) {
-      res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
-      
-      res += owners_and_members[parsed.blocks[x].player];
-      
-      res += "</td><td><span class='item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"'></span> "
-      +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
-      +"<td><span class='transparent'>/tp</span> "+parsed.blocks[x].x+"<span class='transparent'>,</span>"
-      +""+parsed.blocks[x].y+"<span class='transparent'>,</span>"
-      +""+parsed.blocks[x].z+"</td>"
-      +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
-    }
-    res += "</table><hr>"+pages_list;
+    var breaked_blocks_db = {};
+    var placed_blocks_db = {};
+    var blocks_table = "";
     
-    el.innerHTML = res;
+    for(var x = 0; x < parsed.blocks.length; x++) {
+      var id = parsed.blocks[x].block;
+      var data = parsed.blocks[x].data;
+      var type = parsed.blocks[x].type;
+      var world = parsed.blocks[x].world;
+      var player = parsed.blocks[x].player;
+      var block_x = parsed.blocks[x].x;
+      var block_y = parsed.blocks[x].y;
+      var block_z = parsed.blocks[x].z;
+      
+      var css_block_id = "item_"+id+" item_"+id+"_"+data;
+      
+      // перечень разрушенных/поставленных блоков
+      if(type == 0) { // разрушил
+        if(breaked_blocks_db[css_block_id] === undefined) {
+          breaked_blocks_db[css_block_id] = {};
+          breaked_blocks_db[css_block_id].id = id;
+          breaked_blocks_db[css_block_id].data = data;
+          breaked_blocks_db[css_block_id].count = 1;
+        } else {
+          breaked_blocks_db[css_block_id].count++;
+        }
+      } else { // поставил
+        if(placed_blocks_db[css_block_id] === undefined) {
+          placed_blocks_db[css_block_id] = {};
+          placed_blocks_db[css_block_id].id = id;
+          placed_blocks_db[css_block_id].data = data;
+          placed_blocks_db[css_block_id].count = 1;
+        } else {
+          placed_blocks_db[css_block_id].count++;
+        }
+      }
+      
+      blocks_table += "<tr>"
+        +"<td>"+world+"</td>"
+        +"<td>"+banned_status[player]+"</td>"
+        +"<td>"+block_html_image(id, data)+" "+(type==0?"разрушил":"поставил")+" #"+id+(data==0?"":":"+data)+"</td>"
+        +"<td><span class='transparent'>/tp</span> "+block_x+"<span class='transparent'>,</span>"+block_y+"<span class='transparent'>,</span>"+block_z+"</td>"
+        +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td>"
+        +"</tr>";
+    }
+    
+    // логи блоков
+    blocks_table = "<table width='100%'>"+blocks_table+"</table>";
+    
+    // перечень разрушенных блоков
+    var breaked_blocks_summary = "";
+    for(var x in breaked_blocks_db) {
+      breaked_blocks_summary += "<span class='item "+x+"' title='#"+breaked_blocks_db[x].id+":"+breaked_blocks_db[x].data+"'></span>&times;"+breaked_blocks_db[x].count+" ";
+    }
+    if(breaked_blocks_summary !== "") {
+      breaked_blocks_summary = "<table><tr><td>Разрушил: "+breaked_blocks_summary+"</td></tr></table>";
+    }
+    
+    // перечень поставленных блоков
+    var placed_blocks_summary = "";
+    for(var x in placed_blocks_db) {
+      placed_blocks_summary += "<span class='item "+x+"' title='#"+placed_blocks_db[x].id+":"+placed_blocks_db[x].data+"'></span>&times;"+placed_blocks_db[x].count+" ";
+    }
+    if(placed_blocks_summary !== "") {
+      placed_blocks_summary = "<table><tr><td>Поставил: "+placed_blocks_summary+"</td></tr></table>";
+    }
+    
+    el.innerHTML = "<pre>"+(pages_list===""?"":pages_list+"<hr style='margin:10px 0;'/>")+placed_blocks_summary+breaked_blocks_summary+"<hr style='margin:10px 0;'/>"+blocks_table+(pages_list===""?"":"<hr style='margin:10px 0;'/>"+pages_list)+"</pre>";
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
     
     document.getElementById("blocks").classList.remove("hidden");
@@ -694,7 +924,7 @@ blocks2.callback = function(e) {
   el.innerHTML = "";
   el_src.innerHTML = "";
   
-  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+  if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
       JSON.parse(xmlhttp.responseText);
     } catch(err) {
@@ -703,78 +933,44 @@ blocks2.callback = function(e) {
     }
     var parsed = JSON.parse(xmlhttp.responseText);
     
-    var res = "";
-    var pages_list = pagination(parsed,undefined,undefined,"http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1],"blocks2.send");
-    res += pages_list;
-    
-    var owners_and_members = {};
-    for(var x = 0; x < parsed.blocks.length; x++) {
-      owners_and_members[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);;
-    }
-    
-    res += "<table width='100%'>";
-    for(var x = 0; x < parsed.blocks.length; x++) {
-      res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
+    if(parsed.error !== undefined) {
+      el.innerHTML = "<div class='alert alert-info'>"+parsed.error+"</div>";
+      el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
       
-      res += owners_and_members[parsed.blocks[x].player];
+      document.getElementById("blocks").classList.remove("hidden");
       
-      res += "</td><td><span class='item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"'></span> "
-      +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
-      +"<td><span class='transparent'>/tp</span> "+parsed.blocks[x].x+"<span class='transparent'>,</span>"
-      +""+parsed.blocks[x].y+"<span class='transparent'>,</span>"
-      +""+parsed.blocks[x].z+"</td>"
-      +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
+      return false;
     }
-    res += "</table>"
     
-    el.innerHTML = res;
-    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
-    
-    document.getElementById("blocks").classList.remove("hidden");
-  }
-}
-
-var blocks3 = new request();
-blocks3.callback = function(e) {
-  var el = document.querySelector("#blocks .output");
-  var el_src = document.querySelector("#blocks .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
-  
-  if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-    try {
-      JSON.parse(xmlhttp.responseText);
-    } catch(err) {
-      el.innerHTML = "error";
-      return;
-    }
-    var parsed = JSON.parse(xmlhttp.responseText);
-    
-    var res = "";
-    var pages_list = pagination(parsed,undefined,undefined,"http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1],"blocks2.send");
-    res += pages_list;
-    
-    var owners_and_members = {};
+    var banned_status = {};
     for(var x = 0; x < parsed.blocks.length; x++) {
-      owners_and_members[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
+      banned_status[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
     }
     
-    res += "<table width='100%'>";
+    var blocks_table = "";
+    
     for(var x = 0; x < parsed.blocks.length; x++) {
-      res += "<tr><td>"+parsed.blocks[x].world+"</td><td>";
+      var id = parsed.blocks[x].block;
+      var data = parsed.blocks[x].data;
+      var type = parsed.blocks[x].type;
+      var world = parsed.blocks[x].world;
+      var player = parsed.blocks[x].player;
+      var block_x = parsed.blocks[x].x;
+      var block_y = parsed.blocks[x].y;
+      var block_z = parsed.blocks[x].z;
       
-      res += owners_and_members[parsed.blocks[x].player];
-      
-      res += "</td><td><span class='item item_"+parsed.blocks[x].block+" item_"+parsed.blocks[x].block+"_"+parsed.blocks[x].data+"'></span> "
-      +(parsed.blocks[x].type==0?"разрушил":"поставил")+" #"+parsed.blocks[x].block+(parsed.blocks[x].data==0?"":":"+parsed.blocks[x].data)+"</td>"
-      +"<td><span class='transparent'>/tp</span> "+parsed.blocks[x].x+"<span class='transparent'>,</span>"
-      +""+parsed.blocks[x].y+"<span class='transparent'>,</span>"
-      +""+parsed.blocks[x].z+"</td>"
-      +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td></tr>";
+      blocks_table += "<tr>"
+        +"<td>"+world+"</td>"
+        +"<td>"+banned_status[player]+"</td>"
+        +"<td>"+block_html_image(id, data)+" "+(type==0?"разрушил":"поставил")+" #"+id+(data==0?"":":"+data)+"</td>"
+        +"<td><span class='transparent'>/tp</span> "+block_x+"<span class='transparent'>,</span>"+block_y+"<span class='transparent'>,</span>"+block_z+"</td>"
+        +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td>"
+        +"</tr>";
     }
-    res += "</table>"
     
-    el.innerHTML = res;
+    blocks_table = "<table width='100%'>"+blocks_table+"</table>"
+    
+    el.innerHTML = "<pre>"+blocks_table+"</pre>";
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
     
     document.getElementById("blocks").classList.remove("hidden");
@@ -791,9 +987,14 @@ document.addEventListener("click", function(e) {
   }
   
   if(e.target.id === "blocks_sbmt") {
-    blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+blocks_x_z.value.split(",")[0]+"&z="+blocks_x_z.value.split(",")[1]);
+    var coords = blocks_x_z.value.split(",");
+    if(coords.length === 3) {
+      blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&y="+coords[1]+"&z="+coords[2]);
+    } else if(coords.length === 2) {
+      blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&z="+coords[1]);
+    }
   } else if(e.target.id === "blocks_sbmt2") {
-    blocks3.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
+    blocks2.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
   } else if(e.target.id === "player_sbmt") {
     history.replaceState("", document.title, window.location.pathname + "#Loading...");
     
