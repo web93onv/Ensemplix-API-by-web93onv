@@ -72,42 +72,27 @@
   <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
     <ul class="nav navbar-nav">
       <li class="dropdown">
-        <a href="http://ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
+        <a href="https://ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="http://ensemplix.ru" target="_blank">Главная страница</a></li>
+          <li><a href="https://ensemplix.ru" target="_blank">Главная страница</a></li>
           <li class="divider"></li>
-          <li><a href="http://ensemplix.ru/articles/view/1/" target="_blank">Правила сервера</a></li>
-          <li><a href="http://ensemplix.ru/articles/view/6/" target="_blank">Команды сервера</a></li>
-          <li><a href="http://ensemplix.ru/articles/view/3/" target="_blank">Защита территории</a></li>
+          <li><a href="https://ensemplix.ru/articles/view/1/" target="_blank">Правила сервера</a></li>
+          <li><a href="https://ensemplix.ru/articles/view/6/" target="_blank">Команды сервера</a></li>
+          <li><a href="https://ensemplix.ru/articles/view/3/" target="_blank">Защита территории</a></li>
           <li class="divider"></li>
-          <li><a href="http://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
+          <li><a href="https://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
         </ul>
       </li>
       <li class="dropdown">
-        <a href="http://forum.ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Форум <b class="caret"></b></a>
+        <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Карты серверов <b class="caret"></b></a>
         <ul class="dropdown-menu">
-          <li><a href="http://forum.ensemplix.ru" target="_blank">Главная страница</a></li>
-          <li class="divider"></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=1" target="_blank">Объявления</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=3" target="_blank">Общий раздел</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=4" target="_blank">Помощь</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=6" target="_blank">Книга жалоб и предложений</a></li>
-          <li class="divider"></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=20" target="_blank">Sandbox</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=26" target="_blank">HiTech</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=56" target="_blank">Cogito</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=61" target="_blank">Carnage</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=67" target="_blank">Davids</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=109" target="_blank">Amber</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=119" target="_blank">Magnus</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=200" target="_blank">Theos</a></li>
-          <li><a href="http://forum.ensemplix.ru/viewforum.php?f=206" target="_blank">Dedal</a></li>
+          <li><a href="http://map.ensemplix.ru" target="_blank">Sandbox</a></li>
         </ul>
       </li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a class="icon" href="https://github.com/web93onv" target="_blank" class="dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
+        <a href="https://github.com/web93onv" target="_blank" class="icon dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="https://github.com/web93onv" target="_blank">web93onv GitHub Profile</a></li>
           <li class="divider"></li>
@@ -1089,12 +1074,13 @@ function ozozolka() {
 </script>
 
 <script>
-$("a[href^='http'].icon").each(function() {      
+$("a[href^='http'].icon").each(function() {
   $(this).css({
-     background: "url(http://www.google.com/s2/u/0/favicons?domain=" + this.hostname +
-     ") left center no-repeat", 
-     "padding-left": "20px" 
-  });  
+    "background-image": "url(http://www.google.com/s2/u/0/favicons?domain=" + this.hostname + ")",
+    "background-position": "15px center",
+    "background-repeat": "no-repeat",
+    "padding-left": "35px"
+  });
 });
 </script>
 
