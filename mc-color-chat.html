@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" name="viewport" />
+  <title>Ensemplix API by web93onv</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" />
+  <style>
+    @font-face {
+      font-family: "Minecraft";
+      src: url("minecraft_1_1.ttf") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+    .mc {
+      font-family: Minecraft;
+      font-size: 16px;
+      color: #fff;
+      text-shadow: 2px 2px #3f3f3f;;
+    }
+    .mc-textarea {
+      background: #444;
+      padding: 2px 4px 4px 8px;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .mc-0 {
+      color: #151515;
+      text-shadow: 2px 2px #151515;
+    }
+    .mc-1 {
+      color: #00a;
+      text-shadow: 2px 2px #00002a;
+    }
+    .mc-2 {
+      color: #0a0;
+      text-shadow: 2px 2px #002a00;
+    }
+    .mc-3 {
+      color: #0aa;
+      text-shadow: 2px 2px #002a2a;
+    }
+    .mc-4 {
+      color: #a00;
+      text-shadow: 2px 2px #2a0000;
+    }
+    .mc-5 {
+      color: #a0a;
+      text-shadow: 2px 2px #2a002a;
+    }
+    .mc-6 {
+      color: #fa0;
+      text-shadow: 2px 2px #002a00;
+    }
+    .mc-7 {
+      color: #aaa;
+      text-shadow: 2px 2px #2a2a2a;
+    }
+    .mc-8 {
+      color: #555;
+      text-shadow: 2px 2px #151515;
+    }
+    .mc-9 {
+      color: #55f;
+      text-shadow: 2px 2px #15153f;
+    }
+    .mc-a {
+      color: #5f5;
+      text-shadow: 2px 2px #153f15;
+    }
+    .mc-b {
+      color: #5ff;
+      text-shadow: 2px 2px #153f3f;
+    }
+    .mc-c {
+      color: #f55;
+      text-shadow: 2px 2px #3f1515;
+    }
+    .mc-d {
+      color: #f5f;
+      text-shadow: 2px 2px #3f153f;
+    }
+    .mc-e {
+      color: #ff5;
+      text-shadow: 2px 2px #3f3f15;
+    }
+    .mc-f {
+      color: #fff;
+      text-shadow: 2px 2px #3f3f3f;
+    }
+    .mc-k {
+      
+    }
+    .mc-l {
+      font-weight: bold;
+    }
+    .mc-m {
+      text-decoration: line-through;
+    }
+    .mc-n {
+      text-decoration: underline;
+    }
+    .mc-o {
+      font-style: italic;;
+    }
+    .mc-r {
+      
+    }
+  </style>
+  <style>
+    html,
+    body {
+      height: 100%;
+      /* The html and body elements cannot have any padding or margin. */
+    }
+
+    /* Wrapper for page content to push down footer */
+    #wrap {
+      min-height: 100%;
+      height: auto;
+      /* Negative indent footer by its height */
+      margin: 0 auto -60px;
+      /* Pad bottom by footer height */
+      padding: 0 0 60px;
+    }
+
+    /* Set the fixed height of the footer here */
+    #footer {
+      height: 60px;
+      background-color: #f5f5f5;
+    }
+  </style>
+  <link rel="stylesheet" href="blocks_items.css" />
+</head>
+<body>
+
+<div id="wrap">
+  <div class="container" style="padding-top:20px;">
+    <nav class="navbar navbar-default" role="navigation">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="http://ens.pavlo.cc/">Ensemplix API</a>
+      </div>
+      
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="dropdown">
+            <a href="https://ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="https://ensemplix.ru" target="_blank">Главная страница</a></li>
+              <li class="divider"></li>
+              <li><a href="https://ensemplix.ru/articles/view/1/" target="_blank">Правила сервера</a></li>
+              <li><a href="https://ensemplix.ru/articles/view/6/" target="_blank">Команды сервера</a></li>
+              <li><a href="https://ensemplix.ru/articles/view/3/" target="_blank">Защита территории</a></li>
+              <li class="divider"></li>
+              <li><a href="https://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Карты серверов <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="http://map.ensemplix.ru" target="_blank">Sandbox</a></li>
+            </ul>
+          </li>
+          <li class="active"><a href="http://ens.pavlo.cc/mc-color-chat.html">Цветной чат</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="https://github.com/web93onv" target="_blank" class="icon dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="https://github.com/web93onv" target="_blank">web93onv GitHub Profile</a></li>
+              <li class="divider"></li>
+              <li><a href="https://github.com/web93onv/Ensemplix-API-by-web93onv" target="_blank">Ensemplix API</a></li>
+              <li><a href="https://github.com/web93onv/Minecraft-items-and-blocks-CSS" target="_blank">Minecraft items and blocks CSS</a></li>
+            </ul>
+          </li>
+          <li><a class="icon" href="http://pavlo.cc" target="_blank">Компьютерная помощь</a></li>
+        </ul>
+      </div>
+    </nav>
+    
+    <h2>Цветной чат</h2>
+    <div id="color_chat" class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <textarea id="color_chat_input" class="form-control" rows="15">Давай затестим цветной текст в чате!
+&0black
+&1darkblue
+&2darkgreen
+&3darkaqua
+&4darkred
+&5purple
+&6gold
+&7grey
+&8darkgrey
+&9blue
+&agreen
+&baqua
+&cred
+&dpink
+&eyellow
+&fwhite </textarea>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="output mc mc-textarea">Давай затестим!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer">
+  <div class="container">
+    <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2014</p>
+  </div>
+</div>
+
+<script>
+function htmlEscape(str) {
+  return String(str)
+    .replace(/</g, '&#60;')
+    .replace(/>/g, '&#62;');
+}
+
+function mcChatReplacer(str, p1, p2, offset, s) {
+  return "<span class='mc mc-"+p1.toLowerCase()+"'>"+p2+"</span>";
+}
+
+function mcChat(str) {
+  return htmlEscape(str)
+    .replace(/\n/ig,"\n§f")
+    .replace(/&([0-9a-fklmnor])/ig,"§$1")
+      .replace(/§[klmnor]/ig, "") // удаление форматировочных кодов :-(
+    .replace(/§([0-9a-f])([^§]+)/ig, mcChatReplacer)
+    .replace(/§[0-9a-fklmnor]/ig, "");
+}
+
+var el = document.querySelector("#color_chat .output");
+
+el.innerHTML = mcChat(color_chat_input.value);
+
+document.addEventListener("keyup", function(e) {
+  el.innerHTML = mcChat(color_chat_input.value);
+});
+</script>
+
+<script>
+$("a[href^='http'].icon").each(function() {
+  $(this).css({
+    "background-image": "url(http://www.google.com/s2/u/0/favicons?domain=" + this.hostname + ")",
+    "background-position": "15px center",
+    "background-repeat": "no-repeat",
+    "padding-left": "35px"
+  });
+});
+</script>
+
+</body>
+</html>

@@ -21,11 +21,108 @@
     .transparent {
       color: transparent;
     }
+  </style>
+  <style>
     @font-face {
       font-family: "Minecraft";
       src: url("minecraft_1_1.ttf") format("truetype");
       font-weight: normal;
       font-style: normal;
+    }
+    .mc {
+      font-family: Minecraft;
+      font-size: 16px;
+      color: #fff;
+      text-shadow: 2px 2px #3f3f3f;;
+    }
+    .mc-textarea {
+      background: #444;
+      padding: 2px 4px 4px 8px;
+      white-space: pre-wrap;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .mc-0 {
+      color: #151515;
+      text-shadow: 2px 2px #151515;
+    }
+    .mc-1 {
+      color: #00a;
+      text-shadow: 2px 2px #00002a;
+    }
+    .mc-2 {
+      color: #0a0;
+      text-shadow: 2px 2px #002a00;
+    }
+    .mc-3 {
+      color: #0aa;
+      text-shadow: 2px 2px #002a2a;
+    }
+    .mc-4 {
+      color: #a00;
+      text-shadow: 2px 2px #2a0000;
+    }
+    .mc-5 {
+      color: #a0a;
+      text-shadow: 2px 2px #2a002a;
+    }
+    .mc-6 {
+      color: #fa0;
+      text-shadow: 2px 2px #002a00;
+    }
+    .mc-7 {
+      color: #aaa;
+      text-shadow: 2px 2px #2a2a2a;
+    }
+    .mc-8 {
+      color: #555;
+      text-shadow: 2px 2px #151515;
+    }
+    .mc-9 {
+      color: #55f;
+      text-shadow: 2px 2px #15153f;
+    }
+    .mc-a {
+      color: #5f5;
+      text-shadow: 2px 2px #153f15;
+    }
+    .mc-b {
+      color: #5ff;
+      text-shadow: 2px 2px #153f3f;
+    }
+    .mc-c {
+      color: #f55;
+      text-shadow: 2px 2px #3f1515;
+    }
+    .mc-d {
+      color: #f5f;
+      text-shadow: 2px 2px #3f153f;
+    }
+    .mc-e {
+      color: #ff5;
+      text-shadow: 2px 2px #3f3f15;
+    }
+    .mc-f {
+      color: #fff;
+      text-shadow: 2px 2px #3f3f3f;
+    }
+    .mc-k {
+      
+    }
+    .mc-l {
+      font-weight: bold;
+    }
+    .mc-m {
+      text-decoration: line-through;
+    }
+    .mc-n {
+      text-decoration: underline;
+    }
+    .mc-o {
+      font-style: italic;;
+    }
+    .mc-r {
+      
     }
   </style>
   <style>
@@ -89,6 +186,7 @@
           <li><a href="http://map.ensemplix.ru" target="_blank">Sandbox</a></li>
         </ul>
       </li>
+      <li><a href="http://ens.pavlo.cc/mc-color-chat.html">Цветной чат</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
@@ -321,35 +419,25 @@
 </div>
 
 <script>
-var colors = [
-  {name:"black",color:"#151515",color2:"#151515",code:"0"},
-  {name:"darkblue",color:"#00a",color2:"rgb(0,0,42)",code:"1"},
-  {name:"darkgreen",color:"#0a0",color2:"rgb(0,42,0)",code:"2"},
-  {name:"darkaqua",color:"#0aa",color2:"rgb(0,42,42)",code:"3"},
-  {name:"darkred",color:"#a00",color2:"rgb(42,0,0)",code:"4"},
-  {name:"purple",color:"#a0a",color2:"rgb(42,0,42)",code:"5"},
-  {name:"gold",color:"#fa0",color2:"rgb(0,42,0)",code:"6"},
-  {name:"grey",color:"#aaa",color2:"rgb(42,42,42)",code:"7"},
-  {name:"darkgrey",color:"#555",color2:"rgb(21,21,21)",code:"8"},
-  {name:"blue",color:"#55f",color2:"rgb(21,21,63)",code:"9"},
-  {name:"green",color:"#5f5",color2:"rgb(21,63,21)",code:"a"},
-  {name:"aqua",color:"#5ff",color2:"rgb(21,63,63)",code:"b"},
-  {name:"red",color:"#f55",color2:"rgb(63,21,21)",code:"c"},
-  {name:"pink",color:"#f5f",color2:"rgb(63,21,63)",code:"d"},
-  {name:"yellow",color:"#ff5",color2:"rgb(63,63,21)",code:"e"},
-  {name:"white",color:"#fff",color2:"rgb(63,63,63)",code:"f"}
-];
-var formats = [
-  {name:"",tag:"%s",code:"k"},
-  {name:"bold",tag:"<b>%s</b>",code:"l"},
-  {name:"line-through",tag:"<span style='text-decoration:line-through;'>%s</u>",code:"m"},
-  {name:"underline",tag:"<span style='text-decoration:underline;'>%s</u>",code:"n"},
-  {name:"italic",tag:"<span style='font-style:italic;'>%s</span>",code:"o"},
-  {name:"reset",tag:"%s",code:"r"}
-];
-</script>
+function htmlEscape(str) {
+  return String(str)
+    .replace(/</g, '&#60;')
+    .replace(/>/g, '&#62;');
+}
 
-<script>
+function mcChatReplacer(str, p1, p2, offset, s) {
+  return "<span class='mc mc-"+p1.toLowerCase()+"'>"+p2+"</span>";
+}
+
+function mcChat(str) {
+  return htmlEscape(str)
+    .replace(/\n/ig,"\n§f")
+    .replace(/&([0-9a-fklmnor])/ig,"§$1")
+      .replace(/§[klmnor]/ig, "") // удаление форматировочных кодов :-(
+    .replace(/§([0-9a-f])([^§]+)/ig, mcChatReplacer)
+    .replace(/§[0-9a-fklmnor]/ig, "");
+}
+
 function pagination(parsed, url, fnc) {
   var res = "";
   
@@ -391,7 +479,7 @@ function pagination(parsed, url, fnc) {
 
 var players_db = {};
 
-function player_create(e) {
+function player_db_add(e) {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.open("GET", "http://api.ensemplix.ru/v2/player/violations/?player="+e, false);
   xmlhttp.send();
@@ -412,7 +500,7 @@ function player_link(e) {
   
   if(typeof e == "string") {
     if(typeof players_db[e] == "undefined") {
-      player_create(e);
+      player_db_add(e);
     }
     
     if(players_db[e] == null) {
@@ -518,24 +606,8 @@ info.callback = function(e) {
     var chatcolor = (parsed.chat_color!=null?"§"+parsed.chat_color:"");
     var prefix = (parsed.prefix!=null?"§f"+parsed.prefix.replace(/§[klmnor]/ig,'')+" ":""); // форматировочные коды пока игнорируются
     
-    var message = ("§f"+prefix+" §f"+levelcolor+"<§f"+namecolor+(/ensiriuswow/i.test(parsed.player)?"Сириус":parsed.player)+"§f"+levelcolor+"> §f"+chatcolor+"Привет :)")
-      .split(/§([0-9a-f])/);
-    
-    var message_foreground = "";
-    var message_background = "";
-
-    for(var x = 0; x < message.length; x++) {
-      for(var y = 0; y < colors.length; y++) {
-        if(message[x] === colors[y].code) {
-          x++;
-          if(message[x] !== "") {
-            message_foreground += "<span style='color:"+colors[y].color+";'>"+message[x]+"</span>";
-            message_background += "<span style='color:"+colors[y].color2+";'>"+message[x]+"</span>";
-          }
-          break;
-        }
-      }
-    }
+    var message = ("§f"+prefix+" §f"+levelcolor+"<§f"+namecolor+(/ensiriuswow/i.test(parsed.player)?"Сириус":parsed.player)+"§f"+levelcolor+"> §f"+chatcolor+"Привет :)");
+    message = mcChat(message);
     
     var lvl = "[ранг]";
     switch (parsed.level) {
@@ -567,8 +639,7 @@ info.callback = function(e) {
       +"<img style='max-height:200px;' alt='Аватар' title='Аватара на сайте' src='"+parsed.logo_url+"' class='img-thumbnail'/> "
       +"<a class='img-thumbnail' target='_blank' href='http://enskins.ru/"+parsed.player+".png' title='Открыть скин в новой вкладке'><img class='zozok' width='150' height='150' data-src='http://enskins.ru/"+parsed.player+".png' onerror='this.parentNode.parentNode.removeChild(this.parentNode);'/></a> "
       +"<a class='img-thumbnail' target='_blank' href='http://enskins.ru/Cloaks/"+parsed.player+".png' title='Открыть плащ в новой вкладке'><img class='zozok' width='150' height='150' data-src='http://enskins.ru/Cloaks/"+parsed.player+".png' onerror='this.parentNode.parentNode.removeChild(this.parentNode);'/></a><br/><br/>"
-      +"<p style=\"position:absolute;color:white;font-family:'Minecraft';font-size:16px;\">&nbsp;"+message_foreground+"</p>"
-      +"<p style=\"padding:2px 0 0 2px;background-color:#444;color:white;font-family:'Minecraft';font-size:16px;\">&nbsp;"+message_background+"</p>"
+      +"<div class='mc mc-textarea'>"+message+"</div>"
       +((parsed.clan!=null)?"Клан: <b>"+parsed.clan+"</b><br/>":"")
       +"Имущество: <b>"+parsed.coins+" койн</b><br/>"
       +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b><br/>"
