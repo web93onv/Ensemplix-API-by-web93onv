@@ -438,6 +438,17 @@ function mcChat(str) {
     .replace(/§[0-9a-fklmnor]/ig, "");
 }
 
+function moneyParse(e) {
+  if(typeof e !== "number") e = Number(e);
+  if(e <= 9999) return e;
+  var moneyParsed = (e.toString(10)).replace(/(\d{1,3})(\d)\d\d((\d\d\d)?)+$/, "$1.$2");
+  moneyParsed = Number(moneyParsed);
+  var moneyEnding = (e.toString(10).length <= 3) ? "" : (e.toString(10).length <= 6) ? "тыс." : (e.toString(10).length <= 9) ? "млн." : (e.toString(10).length <= 12) ? "млрд." : (e.toString(10).length <= 15) ? "трлн." : "wat?";
+  moneyParsed = moneyParsed + " " + moneyEnding;
+
+  return moneyParsed.toString().replace(/(\d)\./, "$1,");
+}
+
 function pagination(parsed, url, fnc) {
   var res = "";
   
@@ -499,8 +510,8 @@ function player_link(e) {
   var player_regexp = RegExp("^"+player_input.value+"$", "i");
   
   if(typeof e == "string") {
-    if(typeof players_db[e] == "undefined") {
-      player_db_add(e);
+    if(players_db[e.toLowerCase()] === undefined) {
+      player_db_add(e.toLowerCase());
     }
     
     if(players_db[e] == null) {
@@ -601,47 +612,57 @@ info.callback = function(e) {
       return false;
     };
     
-    var levelcolor = ((parsed.level==null)||(parsed.level==undefined)?"":parsed.level==2?"§3":parsed.level==3?"§6":parsed.level==4?"§9":parsed.level==5?"§e":parsed.level>=6?"§c":"");
-    var namecolor = (parsed.name_color!=null?"§"+parsed.name_color:"");
-    var chatcolor = (parsed.chat_color!=null?"§"+parsed.chat_color:"");
-    var prefix = (parsed.prefix!=null?"§f"+parsed.prefix.replace(/§[klmnor]/ig,'')+" ":""); // форматировочные коды пока игнорируются
-    
-    var message = ("§f"+prefix+" §f"+levelcolor+"<§f"+namecolor+(/ensiriuswow/i.test(parsed.player)?"Сириус":parsed.player)+"§f"+levelcolor+"> §f"+chatcolor+"Привет :)");
-    message = mcChat(message);
-    
-    var lvl = "[ранг]";
+    var rank = ""; // ранг
+    var rankcolor = ""; // цвет обводки никнейма
     switch (parsed.level) {
-      case 1:
-        lvl = "Игрок";
-        break;
-      case 2:
-        lvl = "Power-Player";
-        break;
-      case 3:
-        lvl = "VIP";
-        break;
-      case 4:
-        lvl = "Super-VIP";
-        break;
-      case 5:
-        lvl = "Модератор";
+      case 7:
+        rank = "Супер Администратор :3";
+        rankcolor = "§c";
         break;
       case 6:
-        lvl = "Администратор";
+        rank = "Администратор";
+        rankcolor = "§c";
         break;
-      case 7:
-        lvl = "Супер Администратор :3";
+      case 5:
+        rank = "Модератор";
+        rankcolor = "§e";
+        break;
+      case 4:
+        rank = "Super-VIP";
+        rankcolor = "§9";
+        break;
+      case 3:
+        rank = "VIP";
+        rankcolor = "§6";
+        break;
+      case 2:
+        rank = "Power-Player";
+        rankcolor = "§3";
+        break;
+      case 1:
+        rank = "Игрок";
+        rankcolor = "§f";
         break;
     }
     
+    var namecolor = (parsed.name_color!=null?"§"+parsed.name_color:"§f"); // цвет никнейма
+    var chatcolor = (parsed.chat_color!=null?"§"+parsed.chat_color:"§f"); // цвет чата
+    var prefix = (parsed.prefix!=null?"§f"+parsed.prefix.replace(/§[klmnor]/ig,''):""); // префикс, форматировочные коды пока игнорируются
+    var clan = (parsed.clan!=null?parsed.clan:"");
+    
+    // пример сообщения в чате
+    var message = ((prefix!=""?prefix+" ":"")+rankcolor+"<"+namecolor+(/ensiriuswow/i.test(parsed.player)?"Сириус":parsed.player)+rankcolor+"> "+chatcolor+"Привет :)");
+    message = mcChat(message); // парсинг цветовых кодов в html
+    
     var res2 = ""
-      +""+parsed.player+", <b>"+lvl+"</b><br/>"
+      +parsed.player+", <b>"+rank+"</b><br/>"
       +"<img style='max-height:200px;' alt='Аватар' title='Аватара на сайте' src='"+parsed.logo_url+"' class='img-thumbnail'/> "
       +"<a class='img-thumbnail' target='_blank' href='http://enskins.ru/"+parsed.player+".png' title='Открыть скин в новой вкладке'><img class='zozok' width='150' height='150' data-src='http://enskins.ru/"+parsed.player+".png' onerror='this.parentNode.parentNode.removeChild(this.parentNode);'/></a> "
       +"<a class='img-thumbnail' target='_blank' href='http://enskins.ru/Cloaks/"+parsed.player+".png' title='Открыть плащ в новой вкладке'><img class='zozok' width='150' height='150' data-src='http://enskins.ru/Cloaks/"+parsed.player+".png' onerror='this.parentNode.parentNode.removeChild(this.parentNode);'/></a><br/><br/>"
       +"<div class='mc mc-textarea'>"+message+"</div>"
-      +((parsed.clan!=null)?"Клан: <b>"+parsed.clan+"</b><br/>":"")
-      +"Имущество: <b>"+parsed.coins+" койн</b><br/>"
+      +(clan!=""?"Клан: <b>"+clan+"</b><br/>":"")
+      +"Имущество: <b>"+moneyParse(parsed.coins)+" койн</b><br/>"
+      +"Опыт: <b>"+moneyParse(parsed.experience)+" XP</b><br/>"
       +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b><br/>"
       +"Последний раз был на сайте: <b>"+timeToHuman(parsed.last_online)+"</b>";
     
@@ -681,7 +702,7 @@ violations.callback = function(e) {
         +parsed.muted.admin
         +"</b> по причине <b>"
         +parsed.muted.reason
-        +"</b><br>от <b>"
+        +"</b><br/>от <b>"
         +timeToHuman(parsed.muted.created)+"</b>, до <b>"+timeToHuman(parsed.muted.till)+"</b></div>";
     }
     
@@ -691,7 +712,7 @@ violations.callback = function(e) {
         +parsed.banned.admin
         +"</b> по причине <b>"
         +parsed.banned.reason
-        +"</b><br>от <b>"
+        +"</b><br/>от <b>"
         +timeToHuman(parsed.banned.created)+"</b>, <b>"+(parsed.banned.till==-1?"навсегда":"до "+timeToHuman(parsed.banned.till))+"</b></div>";
     }
     
@@ -772,7 +793,7 @@ regions.callback = function(e) {
       var ycenter = ((ymin + ylength/2)|0);
       
       // объем региона
-      var region_volume = (xlength+1)*(ylength+1)*(zlength+1);
+      var region_volume = moneyParse((xlength+1)*(ylength+1)*(zlength+1));
       
       var members = "";
       if(region.members.length != 0) {
@@ -792,27 +813,46 @@ regions.callback = function(e) {
         owners = owners.join(", ");
       }
       
-      regions_list += "<li class='list-group-item'><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>, /tp "+xcenter+","+ycenter+","+zcenter+"<br>"
-        +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br>":"")
-        +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br>":"")
-        +(region.flags.length==0?"":"<b>Флаги:</b> "+region.flags.join(", ")+"<br>")
-        +"<b>Объем:</b> "+(xlength+1)+"&times;"+(ylength+1)+"&times;"+(zlength+1)+" = "+region_volume+"<br>"
+      if(region.world === "Sandbox") { // информация  для формирования ссылки на онлайн карту
+        var zoom = 5;
+        var size = (xlength+zlength)/2;
+        
+        if(size <= 90) {
+          zoom = 7
+        } else if(size <= 155) {
+          zoom = 6
+        } else if(size <= 350) {
+          zoom = 5
+        } else if(size <= 690) {
+          zoom = 4
+        } else if(size <= 1390) {
+          zoom = 3
+        } else if(size <= 2700) {
+          zoom = 2
+        } else {
+          zoom = 1
+        }
+      }
+      
+      regions_list += "<li class='list-group-item'><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>, /tp "+xcenter+","+ycenter+","+zcenter
+        +(region.world==="Sandbox"?" <a href='http://map.ensemplix.ru/?worldname=Sandbox&mapname=surface&zoom="+zoom+"&x="+xcenter+"&y=65&z="+zcenter+"' target='_blank'>онлайн карта</a>":"")
+        +"<br/>"
+        +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br/>":"")
+        +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br/>":"")
+        +(region.flags.length==0?"":"<b>Флаги:</b> "+region.flags.join(", ")+"<br/>")
+        +"<b>Объем:</b> "+(xlength+1)+"&times;"+(ylength+1)+"&times;"+(zlength+1)+" = "+region_volume+" блок(ов)<br/>"
         +"<b>Дата создания:</b> "+timeToHuman(region.created)+"</li>";
     }
     regions_list = "<ul class='list-group'>"+regions_list+"</ul>";
     
-    if(pages_list === "") {
-      var res = "<div class='panel panel-default'>"
-      +"<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>Регионы игрока "+player_input.value+"</div>"
-      +regions_list
+    var res = "<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>"
+        +"Регионы игрока <b>"+player_input.value+"</b>"
+        +(pages_list!==""?"<br/>"+pages_list:"")
       +"</div>"
-    } else {
-      var res = "<div class='panel panel-default'>"
-      +"<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>Регионы игрока "+player_input.value+"<br/>"+pages_list+"</div>"
       +regions_list
-      +"<div class='panel-body' style='border-top: 1px solid #E2E2E2;'>"+pages_list+"</div>"
-      +"</div>"
-    }
+      +(pages_list!==""?"<div class='panel-body' style='border-top: 1px solid #E2E2E2;'>"+pages_list+"</div>":"");
+    
+    res = "<div class='panel panel-default'>"+res+"</div>";
     
     el.innerHTML = res;
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
@@ -860,7 +900,7 @@ warps.callback = function(e) {
 }
 
 function block_html_image(block_id, block_data) {
-  return "<span class='item item_"+block_id+" item_"+block_id+"_"+block_data+"'></span>"
+  return "<span class='item item_"+block_id+" item_"+block_id+"_"+block_data+"' title='#"+block_id+(block_data==0?"":":"+block_data)+"'></span>"
 }
 
 var blocks = new request();
@@ -892,8 +932,6 @@ blocks.callback = function(e) {
     var pages_list = pagination(parsed,"http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value,"blocks.send");
     
     // подсветка забаненых
-    var player_regexp = RegExp("^"+player_input.value+"$", "i");
-    
     var banned_status = {};
     for(var x = 0; x < parsed.blocks.length; x++) {
       banned_status[parsed.blocks[x].player] = player_link(parsed.blocks[x].player);
@@ -951,7 +989,8 @@ blocks.callback = function(e) {
     // перечень разрушенных блоков
     var breaked_blocks_summary = "";
     for(var x in breaked_blocks_db) {
-      breaked_blocks_summary += "<span class='item "+x+"' title='#"+breaked_blocks_db[x].id+":"+breaked_blocks_db[x].data+"'></span>&times;"+breaked_blocks_db[x].count+" ";
+      //breaked_blocks_summary += "<span class='item "+x+"' title='#"+breaked_blocks_db[x].id+":"+breaked_blocks_db[x].data+"'></span>&times;"+breaked_blocks_db[x].count+" ";
+      breaked_blocks_summary += block_html_image(breaked_blocks_db[x].id, breaked_blocks_db[x].data)+"&times;"+breaked_blocks_db[x].count+" ";
     }
     if(breaked_blocks_summary !== "") {
       breaked_blocks_summary = "<table><tr><td>Разрушил: "+breaked_blocks_summary+"</td></tr></table>";
@@ -960,7 +999,8 @@ blocks.callback = function(e) {
     // перечень поставленных блоков
     var placed_blocks_summary = "";
     for(var x in placed_blocks_db) {
-      placed_blocks_summary += "<span class='item "+x+"' title='#"+placed_blocks_db[x].id+":"+placed_blocks_db[x].data+"'></span>&times;"+placed_blocks_db[x].count+" ";
+      //placed_blocks_summary += "<span class='item "+x+"' title='#"+placed_blocks_db[x].id+":"+placed_blocks_db[x].data+"'></span>&times;"+placed_blocks_db[x].count+" ";
+      placed_blocks_summary += block_html_image(placed_blocks_db[x].id, placed_blocks_db[x].data)+"&times;"+placed_blocks_db[x].count+" ";
     }
     if(placed_blocks_summary !== "") {
       placed_blocks_summary = "<table><tr><td>Поставил: "+placed_blocks_summary+"</td></tr></table>";
