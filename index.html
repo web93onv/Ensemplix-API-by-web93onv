@@ -330,14 +330,11 @@
         <div class="form-group">
           <select id="blocks_world" class="form-control">
             <option value="Sandbox">Sandbox</option>
-            <option value="CogitoR4">Cogito</option>
             <option value="CarnageR4">Carnage</option>
-            <option value="Theos">Theos</option>
             <option value="AmberR4">Amber</option>
             <option value="DedalR2">Dedal</option>
-            <option value="HiTech152">HiTech</option>
-            <option value="Davids152">Davids</option>
-            <option value="Magnus152">Magnus</option>
+            <option value="Davids">Davids</option>
+            <option value="Davids152">Davids (до 16 марта)</option>
           </select>
         </div>
         <div class="form-group">
@@ -813,7 +810,7 @@ regions.callback = function(e) {
         owners = owners.join(", ");
       }
       
-      if(region.world === "Sandbox") { // информация  для формирования ссылки на онлайн карту
+      if(region.world === "Sandbox" || region.world === "Davids") { // информация  для формирования ссылки на онлайн карту
         var zoom = 5;
         var size = (xlength+zlength)/2;
         
@@ -834,8 +831,19 @@ regions.callback = function(e) {
         }
       }
       
-      regions_list += "<li class='list-group-item'><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>, /tp "+xcenter+","+ycenter+","+zcenter
-        +(region.world==="Sandbox"?" <a href='http://map.ensemplix.ru/?worldname=Sandbox&mapname=surface&zoom="+zoom+"&x="+xcenter+"&y=65&z="+zcenter+"' target='_blank'>онлайн карта</a>":"")
+      // затенение регионов из удаленных миров (серверов)
+      var removed_region = "";
+      var removed_region_highlight = "";
+      if(!/^(Sandbox|CarnageR4|AmberR4|DedalR4|Davids)($|_)/.test(region.world)) {
+        removed_region_highlight = " style='opacity:.6;'"
+        removed_region = "<b style='display:inline-block;float:right;'> МИР УДАЛЕН</b>";
+      }
+      
+      regions_list += "<li class='list-group-item'"+removed_region_highlight+"><b>Регион:</b> "+region.region+", <b>"+region.world+"</b>"
+        +(region.world==="Sandbox"?" <a href='http://map.ensemplix.ru/?worldname=Sandbox&mapname=surface&zoom="+zoom+"&x="+xcenter+"&y=65&z="+zcenter+"' title='Онлайн карта' target='_blank'><img src='map.png'/></a>":"")
+        //+(region.world==="Davids"?" <a href='http://map2.ensemplix.ru/?worldname=Davids&mapname=surface&zoom="+zoom+"&x="+xcenter+"&y=65&z="+zcenter+"' target='_blank'><img src='map.png'/></a>":"")
+        +", /tp "+xcenter+","+ycenter+","+zcenter
+        +removed_region
         +"<br/>"
         +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br/>":"")
         +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br/>":"")
@@ -847,10 +855,10 @@ regions.callback = function(e) {
     
     var res = "<div class='panel-body' style='border-bottom: 1px solid #E2E2E2;'>"
         +"Регионы игрока <b>"+player_input.value+"</b>"
-        +(pages_list!==""?"<br/>"+pages_list:"")
+        +(pages_list!==""?"<span style='display:inline-block;float:right;'>"+pages_list+"</span>":"")
       +"</div>"
       +regions_list
-      +(pages_list!==""?"<div class='panel-body' style='border-top: 1px solid #E2E2E2;'>"+pages_list+"</div>":"");
+      +(pages_list!==""?"<div class='panel-body' style='border-top:1px solid #E2E2E2;'>"+pages_list+"</div>":"");
     
     res = "<div class='panel panel-default'>"+res+"</div>";
     
