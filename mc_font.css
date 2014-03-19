@@ -1,0 +1,101 @@
+@font-face {
+  font-family: "Minecraft";
+  src: url("minecraft_1_1.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+.mc {
+  font-family: Minecraft;
+  font-size: 16px;
+  color: #fff;
+  text-shadow: 2px 2px #3f3f3f;;
+}
+.mc-textarea {
+  background: #444;
+  padding: 2px 4px 4px 8px;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.mc-0 {
+  color: #151515;
+  text-shadow: 2px 2px #151515;
+}
+.mc-1 {
+  color: #00a;
+  text-shadow: 2px 2px #00002a;
+}
+.mc-2 {
+  color: #0a0;
+  text-shadow: 2px 2px #002a00;
+}
+.mc-3 {
+  color: #0aa;
+  text-shadow: 2px 2px #002a2a;
+}
+.mc-4 {
+  color: #a00;
+  text-shadow: 2px 2px #2a0000;
+}
+.mc-5 {
+  color: #a0a;
+  text-shadow: 2px 2px #2a002a;
+}
+.mc-6 {
+  color: #fa0;
+  text-shadow: 2px 2px #002a00;
+}
+.mc-7 {
+  color: #aaa;
+  text-shadow: 2px 2px #2a2a2a;
+}
+.mc-8 {
+  color: #555;
+  text-shadow: 2px 2px #151515;
+}
+.mc-9 {
+  color: #55f;
+  text-shadow: 2px 2px #15153f;
+}
+.mc-a {
+  color: #5f5;
+  text-shadow: 2px 2px #153f15;
+}
+.mc-b {
+  color: #5ff;
+  text-shadow: 2px 2px #153f3f;
+}
+.mc-c {
+  color: #f55;
+  text-shadow: 2px 2px #3f1515;
+}
+.mc-d {
+  color: #f5f;
+  text-shadow: 2px 2px #3f153f;
+}
+.mc-e {
+  color: #ff5;
+  text-shadow: 2px 2px #3f3f15;
+}
+.mc-f {
+  color: #fff;
+  text-shadow: 2px 2px #3f3f3f;
+}
+.mc-k {
+  
+}
+.mc-l {
+  font-weight: bold;
+}
+.mc-m {
+  text-decoration: line-through;
+}
+.mc-n {
+  text-decoration: underline;
+}
+.mc-o {
+  font-style: italic;;
+}
+.mc-r {
+  
+}

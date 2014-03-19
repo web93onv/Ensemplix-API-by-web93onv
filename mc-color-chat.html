@@ -8,109 +8,7 @@
   <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" />
-  <style>
-    @font-face {
-      font-family: "Minecraft";
-      src: url("minecraft_1_1.ttf") format("truetype");
-      font-weight: normal;
-      font-style: normal;
-    }
-    .mc {
-      font-family: Minecraft;
-      font-size: 16px;
-      color: #fff;
-      text-shadow: 2px 2px #3f3f3f;;
-    }
-    .mc-textarea {
-      background: #444;
-      padding: 2px 4px 4px 8px;
-      white-space: pre-wrap;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .mc-0 {
-      color: #151515;
-      text-shadow: 2px 2px #151515;
-    }
-    .mc-1 {
-      color: #00a;
-      text-shadow: 2px 2px #00002a;
-    }
-    .mc-2 {
-      color: #0a0;
-      text-shadow: 2px 2px #002a00;
-    }
-    .mc-3 {
-      color: #0aa;
-      text-shadow: 2px 2px #002a2a;
-    }
-    .mc-4 {
-      color: #a00;
-      text-shadow: 2px 2px #2a0000;
-    }
-    .mc-5 {
-      color: #a0a;
-      text-shadow: 2px 2px #2a002a;
-    }
-    .mc-6 {
-      color: #fa0;
-      text-shadow: 2px 2px #002a00;
-    }
-    .mc-7 {
-      color: #aaa;
-      text-shadow: 2px 2px #2a2a2a;
-    }
-    .mc-8 {
-      color: #555;
-      text-shadow: 2px 2px #151515;
-    }
-    .mc-9 {
-      color: #55f;
-      text-shadow: 2px 2px #15153f;
-    }
-    .mc-a {
-      color: #5f5;
-      text-shadow: 2px 2px #153f15;
-    }
-    .mc-b {
-      color: #5ff;
-      text-shadow: 2px 2px #153f3f;
-    }
-    .mc-c {
-      color: #f55;
-      text-shadow: 2px 2px #3f1515;
-    }
-    .mc-d {
-      color: #f5f;
-      text-shadow: 2px 2px #3f153f;
-    }
-    .mc-e {
-      color: #ff5;
-      text-shadow: 2px 2px #3f3f15;
-    }
-    .mc-f {
-      color: #fff;
-      text-shadow: 2px 2px #3f3f3f;
-    }
-    .mc-k {
-      
-    }
-    .mc-l {
-      font-weight: bold;
-    }
-    .mc-m {
-      text-decoration: line-through;
-    }
-    .mc-n {
-      text-decoration: underline;
-    }
-    .mc-o {
-      font-style: italic;;
-    }
-    .mc-r {
-      
-    }
-  </style>
+  <link rel="stylesheet" href="mc_font.css" />
   <style>
     html,
     body {
@@ -134,66 +32,67 @@
       background-color: #f5f5f5;
     }
   </style>
-  <link rel="stylesheet" href="blocks_items.css" />
 </head>
 <body>
 
 <div id="wrap">
-  <div class="container" style="padding-top:20px;">
-    <nav class="navbar navbar-default" role="navigation">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="http://ens.pavlo.cc/">Ensemplix API</a>
-      </div>
-      
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li class="dropdown">
-            <a href="https://ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="https://ensemplix.ru" target="_blank">Главная страница</a></li>
-              <li class="divider"></li>
-              <li><a href="https://ensemplix.ru/articles/view/1/" target="_blank">Правила сервера</a></li>
-              <li><a href="https://ensemplix.ru/articles/view/6/" target="_blank">Команды сервера</a></li>
-              <li><a href="https://ensemplix.ru/articles/view/3/" target="_blank">Защита территории</a></li>
-              <li class="divider"></li>
-              <li><a href="https://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Карты серверов <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="http://map.ensemplix.ru" target="_blank">Sandbox</a></li>
-            </ul>
-          </li>
-          <li class="active"><a href="http://ens.pavlo.cc/mc-color-chat.html">Цветной чат</a></li>
+<div class="container" style="padding-top:20px;">
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="http://ens.pavlo.cc/">Ensemplix API</a>
+  </div>
+  
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    <ul class="nav navbar-nav">
+      <li class="dropdown">
+        <a href="https://ensemplix.ru" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Сайт <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="https://ensemplix.ru" target="_blank">Главная страница</a></li>
+          <li class="divider"></li>
+          <li><a href="https://ensemplix.ru/articles/view/1/" target="_blank">Правила сервера</a></li>
+          <li><a href="https://ensemplix.ru/articles/view/6/" target="_blank">Команды сервера</a></li>
+          <li><a href="https://ensemplix.ru/articles/view/3/" target="_blank">Защита территории</a></li>
+          <li class="divider"></li>
+          <li><a href="https://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-          <li class="dropdown">
-            <a href="https://github.com/web93onv" target="_blank" class="icon dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="https://github.com/web93onv" target="_blank">web93onv GitHub Profile</a></li>
-              <li class="divider"></li>
-              <li><a href="https://github.com/web93onv/Ensemplix-API-by-web93onv" target="_blank">Ensemplix API</a></li>
-              <li><a href="https://github.com/web93onv/Minecraft-items-and-blocks-CSS" target="_blank">Minecraft items and blocks CSS</a></li>
-            </ul>
-          </li>
-          <li><a class="icon" href="http://pavlo.cc" target="_blank">Компьютерная помощь</a></li>
+      </li>
+      <li class="dropdown">
+        <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Карты серверов <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="http://map.ensemplix.ru" target="_blank">Sandbox</a></li>
         </ul>
-      </div>
-    </nav>
-    
-    <h2>Цветной чат</h2>
-    <div id="color_chat" class="row">
-      <div class="col-md-6">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <textarea id="color_chat_input" class="form-control" rows="15">Давай затестим цветной текст в чате!
+      </li>
+      <li class="active"><a href="mc-color-chat.html">Цветной чат</a></li>
+      <li><a href="blacklist.html">Блеклист</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li class="dropdown">
+        <a href="https://github.com/web93onv" target="_blank" class="icon dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+          <li><a href="https://github.com/web93onv" target="_blank">web93onv GitHub Profile</a></li>
+          <li class="divider"></li>
+          <li><a href="https://github.com/web93onv/Ensemplix-API-by-web93onv" target="_blank">Ensemplix API</a></li>
+          <li><a href="https://github.com/web93onv/Minecraft-items-and-blocks-CSS" target="_blank">Minecraft items and blocks CSS</a></li>
+        </ul>
+      </li>
+      <li><a class="icon" href="http://pavlo.cc" target="_blank">Компьютерная помощь</a></li>
+    </ul>
+  </div>
+</nav>
+
+<h2>Цветной чат</h2>
+<div id="color_chat" class="row">
+  <div class="col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <textarea id="color_chat_input" class="form-control" rows="15">Давай затестим цветной текст в чате!
 &0black
 &1darkblue
 &2darkgreen
@@ -210,20 +109,15 @@
 &dpink
 &eyellow
 &fwhite </textarea>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="output mc mc-textarea">Давай затестим!</div>
       </div>
     </div>
   </div>
+  <div class="col-md-6">
+    <div class="output mc mc-textarea">Давай затестим!</div>
+  </div>
 </div>
 
-<div id="footer">
-  <div class="container">
-    <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2014</p>
-  </div>
+</div>
 </div>
 
 <script>
@@ -255,6 +149,12 @@ document.addEventListener("keyup", function(e) {
 });
 </script>
 
+<div id="footer">
+  <div class="container">
+    <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2014</p>
+  </div>
+</div>
+
 <script>
 $("a[href^='http'].icon").each(function() {
   $(this).css({
@@ -264,6 +164,18 @@ $("a[href^='http'].icon").each(function() {
     "padding-left": "35px"
   });
 });
+</script>
+
+<script>
+if(location.protocol !== "file:") {
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-46473418-2', 'pavlo.cc');
+  ga('send', 'pageview');
+}
 </script>
 
 </body>
