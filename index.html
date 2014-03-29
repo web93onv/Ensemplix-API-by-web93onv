@@ -46,6 +46,9 @@
     .transparent {
       color: transparent;
     }
+    pre .label {
+      font-size: 11px;
+    }
   </style>
 </head>
 <body>
@@ -128,11 +131,11 @@
               url: "http://api.ensemplix.ru/v2/server/bans",
               cache: false,
               success: function(parsed){
-                var res = "<table>";
+                var res = "";
                 for(var x = 0; x < parsed.bans.length; x++) {
                   res += "<tr><td>"+player_link(parsed.bans[x])+"</td><td>"+player_link(parsed.bans[x].admin)+"</td></tr>";
                 }
-                res += "</table>";
+                res = "<table>"+res+"</table>";
                 $("#banlist_list").append(res);
               }
             });
@@ -161,21 +164,68 @@
           </div>
           <div id="serverlist_list" class="modal-body">
             <script>
-            $.ajax({
-              url: "http://api.ensemplix.ru/v2/server/game",
-              cache: false,
-              success: function(parsed){
-                var res = "<table class='table' style='margin-bottom:0;'>";
-                for(var x = 0; x < parsed.length; x++) {
-                  res += "<tr><td>"+parsed[x].name+"</td>";
-                  res += "<td width='100%'><div class='progress' style='margin-bottom:0;'>"
-                      + "<div class='progress-bar' role='progressbar' aria-valuenow='"+parsed[x].players+"' aria-valuemin='0' aria-valuemax='"+parsed[x].maximum+"' style='width: "+parsed[x].players+"%;'></div>"
-                    + "</div></td><td>"+parsed[x].players+"/"+parsed[x].maximum+"</td></tr>";
+            var prev = [];
+            function progressBars() {
+              $.ajax({
+                url: "http://api.ensemplix.ru/v2/server/game",
+                cache: false,
+                success: function(parsed){
+                  var res = "";
+                  
+                  for(var x = 0; x < parsed.length; x++) {
+                    res += "<tr>"
+                      + "<td>"+parsed[x].name+"</td>";
+                    
+                    if(parsed[x].online === true) {
+                      if(prev[x]) {
+                        var diff = parsed[x].players - prev[x].players;
+                        if(diff < 0) {
+                          res += "<td width='100%'>"
+                              + "<div class='progress' style='margin-bottom:0;'>"
+                                + "<div class='progress-bar' style='width:"+(parsed[x].players + diff)+"%;'></div>"
+                                + "<div class='progress-bar progress-bar-danger' style='width:"+(-diff)+"%;'></div>"
+                              + "</div>"
+                            + "</td>"
+                            + "<td>"+parsed[x].players+"/"+parsed[x].maximum+"</td>";
+                        } else {
+                          res += "<td width='100%'>"
+                              + "<div class='progress' style='margin-bottom:0;'>"
+                                + "<div class='progress-bar' style='width:"+(parsed[x].players - diff)+"%;'></div>"
+                                + "<div class='progress-bar progress-bar-success' style='width:"+diff+"%;'></div>"
+                              + "</div>"
+                            + "</td>"
+                            + "<td>"+parsed[x].players+"/"+parsed[x].maximum+"</td>";
+                        }
+                      } else {
+                        res += "<td width='100%'>"
+                            + "<div class='progress' style='margin-bottom:0;'>"
+                              + "<div class='progress-bar' style='width:"+parsed[x].players+"%;'></div>"
+                            + "</div>"
+                          +"</td>"
+                          +"<td>"+parsed[x].players+"/"+parsed[x].maximum+"</td>";
+                      }
+                    } else {
+                      res += "<td width='100%'>"
+                          + "<div class='progress' style='margin-bottom:0;'>"
+                            + "<div class='progress-bar progress-bar-danger' style='width:0;'>Offline</div>"
+                          + "</div>"
+                        +"</td>"
+                        +"<td></td>";
+                    }
+                    
+                    res += "</tr>";
+                  }
+                  
+                  res = "<table class='table' style='margin-bottom:0;'>"+res+"</table>";
+                  
+                  prev = parsed;
+                  
+                  $("#serverlist_list").html(res);
                 }
-                res += "</table>";
-                $("#serverlist_list").append(res);
-              }
-            });
+              });
+            }
+            progressBars();
+            setInterval(progressBars, 1e4);
             </script>
           </div>
           <div class="modal-footer">
@@ -400,45 +450,44 @@ function player_link(e) {
   var player_regexp = RegExp("^"+player_input.value+"$", "i");
   
   if(typeof e == "string") {
-    if(players_db[e.toLowerCase()] === undefined) {
-      player_db_add(e.toLowerCase());
+    var playerName = e;
+    e = e.toLowerCase();
+    
+    if(players_db[e] === undefined) {
+      player_db_add(e);
     }
     
-    if(players_db[e] == null) {
-      if(player_regexp.test(e)) {
-        return e;
-      } else {
-        return "<a href='#"+e+"' target='_blank'>"+e+"</a>";
+    if(player_regexp.test(e)) { // искомый игрок
+      if(players_db[e] == null) { // банов не имеет
+        return "<span class='label label-success'>"+playerName+"</span>";
+      } else if(players_db[e].till == -1) { // вечный бан
+        return "<span class='label label-success' title='Этот игрок в вечном бане!'>"+playerName+" / "+players_db[e].reason+"</span>";
+      } else { // временный бан
+        return "<span class='label label-success' title='Этот игрок временно забанен'>"+playerName+" / "+players_db[e].reason+"</span>";
       }
-    } else {
-      if(players_db[e].till == -1) {
-        if(player_regexp.test(e)) {
-          return e+" <span class='label label-danger' <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
-        } else {
-          return "<span class='bg-danger text-danger'><a href='#"+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-danger' title='Этот игрок в вечном бане!'>"+players_db[e].reason+"</span>";
-        }
-      } else {
-        if(player_regexp.test(e)) {
-          return e+" <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
-        } else {
-          return "<span class='bg-danger text-danger'><a href='#"+e+"' style='color:inherit;' target='_blank'>"+e+"</a></span> <span class='label label-warning' title='Этот игрок временно забанен'>"+players_db[e].reason+"</span>";
-        }
+    } else { // другой игрок
+      if(players_db[e] == null) { // банов не имеет
+        return "<a href='#"+playerName+"' target='_blank' class='label label-info'>"+playerName+"</a>";
+      } else if(players_db[e].till == -1) { // вечный бан
+        return "<a href='#"+playerName+"' target='_blank' class='label label-danger' title='Этот игрок в вечном бане!'>"+playerName+" / "+players_db[e].reason+"</a>";
+      } else { // временный бан
+        return "<a href='#"+playerName+"' target='_blank' class='label label-warning' title='Этот игрок временно забанен'>"+playerName+" / "+players_db[e].reason+"</a>";
       }
     }
   } else if(typeof e == "object") {
-      if(e.till == -1) {
-        if(player_regexp.test(e.player)) {
-          return e.player+" <span class='label label-danger' <span class='label label-danger' title='Этот игрок в вечном бане!'>"+e.reason+"</span>";
-        } else {
-          return "<span class='bg-danger text-danger'><a href='#"+e.player+"' style='color:inherit;' target='_blank'>"+e.player+"</a></span> <span class='label label-danger' title='Этот игрок в вечном бане!'>"+e.reason+"</span>";
-        }
-      } else {
-        if(player_regexp.test(e.player)) {
-          return e.player+" <span class='label label-warning' title='Этот игрок временно забанен'>"+e.reason+"</span>";
-        } else {
-          return "<span class='bg-danger text-danger'><a href='#"+e.player+"' style='color:inherit;' target='_blank'>"+e.player+"</a></span> <span class='label label-warning' title='Этот игрок временно забанен'>"+e.reason+"</span>";
-        }
+    if(player_regexp.test(e.player)) { // искомый игрок
+      if(e.till == -1) { // вечный бан
+        return "<span class='label label-success' title='Этот игрок в вечном бане!'>"+e.player+" / "+e.reason+"</span>";
+      } else { // временный бан
+        return "<span class='label label-success' title='Этот игрок временно забанен'>"+e.player+" / "+e.reason+"</span>";
       }
+    } else { // другой игрок
+      if(e.till == -1) { // вечный бан
+        return "<a href='#"+e.player+"' target='_blank' class='label label-danger' title='Этот игрок в вечном бане!'>"+e.player+" / "+e.reason+"</a>";
+      } else { // временный бан
+        return "<a href='#"+e.player+"' target='_blank' class='label label-warning' title='Этот игрок временно забанен'>"+e.player+" / "+e.reason+"</a>";
+      }
+    }
   }
 }
 
@@ -480,8 +529,6 @@ var info = new request();
 info.callback = function(e) {
   var el = document.querySelector("#info .output");
   var el_src = document.querySelector("#info .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
   
   if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
@@ -569,8 +616,6 @@ var violations = new request();
 violations.callback = function(e) {
   var el = document.querySelector("#violations .output");
   var el_src = document.querySelector("#violations .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
   
   if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
     try {
@@ -617,8 +662,6 @@ var regions = new request();
 regions.callback = function(e) {
   var el = document.querySelector("#regions .output");
   var el_src = document.querySelector("#regions .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
   
   if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
@@ -691,7 +734,7 @@ regions.callback = function(e) {
         for(var y = 0; y < region.members.length; y++) {
           members.push(banned_status[region.members[y]]);
         }
-        members = members.join(", ");
+        members = members.join(" ");
       }
       
       var owners = "";
@@ -700,7 +743,7 @@ regions.callback = function(e) {
         for(var y = 0; y < region.owners.length; y++) {
           owners.push(banned_status[region.owners[y]]);
         }
-        owners = owners.join(", ");
+        owners = owners.join(" ");
       }
       
       if(region.world === "Sandbox" || region.world === "Davids") { // информация  для формирования ссылки на онлайн карту
@@ -766,8 +809,6 @@ var warps = new request();
 warps.callback = function(e) {
   var el = document.querySelector("#warps .output");
   var el_src = document.querySelector("#warps .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
   
   if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
@@ -808,8 +849,6 @@ var blocks = new request();
 blocks.callback = function(e) {
   var el = document.querySelector("#blocks .output");
   var el_src = document.querySelector("#blocks .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
   
   if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
@@ -890,7 +929,6 @@ blocks.callback = function(e) {
     // перечень разрушенных блоков
     var breaked_blocks_summary = "";
     for(var x in breaked_blocks_db) {
-      //breaked_blocks_summary += "<span class='item "+x+"' title='#"+breaked_blocks_db[x].id+":"+breaked_blocks_db[x].data+"'></span>&times;"+breaked_blocks_db[x].count+" ";
       breaked_blocks_summary += block_html_image(breaked_blocks_db[x].id, breaked_blocks_db[x].data)+"&times;"+breaked_blocks_db[x].count+" ";
     }
     if(breaked_blocks_summary !== "") {
@@ -900,7 +938,6 @@ blocks.callback = function(e) {
     // перечень поставленных блоков
     var placed_blocks_summary = "";
     for(var x in placed_blocks_db) {
-      //placed_blocks_summary += "<span class='item "+x+"' title='#"+placed_blocks_db[x].id+":"+placed_blocks_db[x].data+"'></span>&times;"+placed_blocks_db[x].count+" ";
       placed_blocks_summary += block_html_image(placed_blocks_db[x].id, placed_blocks_db[x].data)+"&times;"+placed_blocks_db[x].count+" ";
     }
     if(placed_blocks_summary !== "") {
@@ -918,8 +955,6 @@ var blocks2 = new request();
 blocks2.callback = function(e) {
   var el = document.querySelector("#blocks .output");
   var el_src = document.querySelector("#blocks .source");
-  el.innerHTML = "";
-  el_src.innerHTML = "";
   
   if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
     try {
@@ -975,15 +1010,13 @@ blocks2.callback = function(e) {
 }
 
 document.addEventListener("click", function(e) {
-  if(e.target.id === "blocks_sbmt" || e.target.id === "blocks_sbmt2" || e.target.id === "player_sbmt") {
+  if(e.target.id === "blocks_sbmt") {
     document.getElementById("violations").classList.add("hidden");
     document.getElementById("info").classList.add("hidden");
     document.getElementById("regions").classList.add("hidden");
-    document.getElementById("blocks").classList.add("hidden");
     document.getElementById("warps").classList.add("hidden");
-  }
-  
-  if(e.target.id === "blocks_sbmt") {
+    document.getElementById("blocks").classList.add("hidden");
+    
     var coords = blocks_x_z.value.split(",");
     if(coords.length === 3) {
       blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&y="+coords[1]+"&z="+coords[2]);
@@ -991,37 +1024,44 @@ document.addEventListener("click", function(e) {
       blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&z="+coords[1]);
     }
   } else if(e.target.id === "blocks_sbmt2") {
+    document.getElementById("violations").classList.add("hidden");
+    document.getElementById("info").classList.add("hidden");
+    document.getElementById("regions").classList.add("hidden");
+    document.getElementById("warps").classList.add("hidden");
+    document.getElementById("blocks").classList.add("hidden");
+    
     blocks2.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
   } else if(e.target.id === "player_sbmt") {
     history.replaceState("", document.title, window.location.pathname + "#Loading...");
     
-    var a = document.querySelectorAll(".output");
-    for(var x = 0; x < a.length; x++) {
-      a[x].innerHTML = "";
-    }
-    a = document.querySelectorAll(".source");
-    for(var x = 0; x < a.length; x++) {
-      a[x].innerHTML = "";
-    }
-    
     if(violations_check.checked) {
       violations.send("http://api.ensemplix.ru/v2/player/violations/?player="+player_input.value);
+    } else {
+      document.getElementById("violations").classList.add("hidden");
     }
     
     if(info_check.checked) {
       info.send("http://api.ensemplix.ru/v2/player/info/?player="+player_input.value);
+    } else {
+      document.getElementById("info").classList.add("hidden");
     }
     
     if(regions_check.checked) {
       regions.send("http://api.ensemplix.ru/v2/regions/player/?player="+player_input.value);
+    } else {
+      document.getElementById("regions").classList.add("hidden");
     }
     
     if(blocks_check.checked) {
       blocks.send("http://api.ensemplix.ru/v2/blocks/player/?player="+player_input.value);
+    } else {
+      document.getElementById("blocks").classList.add("hidden");
     }
     
     if(warps_check.checked) {
       warps.send("http://api.ensemplix.ru/v2/warps/player/?player="+player_input.value);
+    } else {
+      document.getElementById("warps").classList.add("hidden");
     }
     
     history.replaceState("", document.title, window.location.pathname + "#" + player_input.value);
