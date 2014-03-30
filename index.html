@@ -267,6 +267,9 @@
           <label class="btn btn-default">
             <input id="blocks_check" type="checkbox" /> Блоки
           </label>
+          <label class="btn btn-default">
+            <input id="shops_check" type="checkbox" /> Торговля
+          </label>
         </div>
       </div>
     </form>
@@ -345,6 +348,17 @@
 </div>
 
 <div id="blocks" class="hidden"><h2>Блоки</h2>
+  <div class="row">
+    <div class="col-md-9">
+      <div class="output"></div>
+    </div>
+    <div class="col-md-3">
+      <pre class="source"></pre>
+    </div>
+  </div>
+</div>
+
+<div id="shops" class="hidden"><h2>Торговля</h2>
   <div class="row">
     <div class="col-md-9">
       <div class="output"></div>
@@ -506,8 +520,16 @@ function xmlhttpStatus(xmlhttp) {
 }
 
 function timeToHuman(e) {
-  var theDate = new Date(e * 1000);
-  return theDate.toGMTString();
+  var a = new Date(e * 1000);
+  
+  var year = a.getFullYear();
+  var month = a.getMonth() + 1 < 10 ? "0" + (a.getMonth() + 1) : a.getMonth() + 1;
+  var date = a.getDate() < 10 ? "0" + a.getDate() : a.getDate();
+  var hour = a.getHours() < 10 ? "0" + a.getHours() : a.getHours();
+  var min = a.getMinutes() < 10 ? "0" + a.getMinutes() : a.getMinutes();
+  var sec = a.getSeconds() < 10 ? "0" + a.getSeconds() : a.getSeconds();
+  
+  return year+"-"+month+"-"+date+" "+hour+":"+min+":"+sec;
 }
 
 function request() {
@@ -1009,28 +1031,109 @@ blocks2.callback = function(e) {
   }
 }
 
-document.addEventListener("click", function(e) {
-  if(e.target.id === "blocks_sbmt") {
-    document.getElementById("violations").classList.add("hidden");
-    document.getElementById("info").classList.add("hidden");
-    document.getElementById("regions").classList.add("hidden");
-    document.getElementById("warps").classList.add("hidden");
-    document.getElementById("blocks").classList.add("hidden");
-    
-    var coords = blocks_x_z.value.split(",");
-    if(coords.length === 3) {
-      blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&y="+coords[1]+"&z="+coords[2]);
-    } else if(coords.length === 2) {
-      blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&z="+coords[1]);
+var shops = new request();
+shops.callback = function(e) {
+  var el = document.querySelector("#shops .output");
+  var el_src = document.querySelector("#shops .source");
+  
+  if(xmlhttp.readyState == 4 && (xmlhttp.status == 200 || xmlhttp.status == 422)) {
+    try {
+      JSON.parse(xmlhttp.responseText);
+    } catch(err) {
+      el.innerHTML = "error";
+      return;
     }
-  } else if(e.target.id === "blocks_sbmt2") {
+    var parsed = JSON.parse(xmlhttp.responseText);
+    
+    if(parsed.error !== undefined) {
+      el.innerHTML = "<div class='alert alert-info'>"+parsed.error+"</div>";
+      el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+      
+      document.getElementById("blocks").classList.remove("hidden");
+      
+      return false;
+    }
+    
+    // пагинация
+    var pages_list = pagination(parsed,"http://api.ensemplix.ru/v2/shops/player/?player="+player_input.value,"shops.send");
+    
+    /*"history": [
+    {
+        "id": 1606328,
+        "item": "ЗЕМЛЯ",
+        "amount": 64,
+        "price": 999,
+        "operation": false,
+        "from": "ensiriuswOw",
+        "to": "Prof_Dumbledor",
+        "x": 4035,
+        "y": 65,
+        "z": -938,
+        "world": "Sandbox",
+        "created": 1395970203,
+        "item_id": 3,
+        "data": 0,
+        "icon_image": "http://ensemplix.ru/images/items/Dirt.png"
+    },*/
+    
+    var shops_table = "";
+    
+    for(var x = 0; x < parsed.history.length; x++) { // parsed.history[x]
+      var world = parsed.history[x].world;
+      var created = timeToHuman(parsed.history[x].created);
+      var from = parsed.history[x].from;
+      var to = parsed.history[x].to;
+      
+      var operation = parsed.history[x].operation == false ? "купил у" : "продал";
+      var amount = parsed.history[x].amount;
+      var price = parsed.history[x].price;
+      
+      var item_id = parsed.history[x].item_id;
+      var data = parsed.history[x].data;
+      
+      var shop_x = parsed.history[x].x;
+      var shop_y = parsed.history[x].y;
+      var shop_z = parsed.history[x].z;
+      
+      shops_table += "<tr>"
+          + "<td>"+world+"&nbsp;</td>"
+          + "<td>"+player_link(from)+" "+operation+" "+player_link(to)+"</td>"
+          + "<td>"+block_html_image(item_id, data)+"</td>"
+          + "<td>"+amount+"шт. за <b>"+price+" койн</b></td>"
+          + "<td><span class='transparent'>/tp</span> "+shop_x+"<span class='transparent'>,</span>"+shop_y+"<span class='transparent'>,</span>"+shop_z+"</td>"
+          + "<td>"+created+"</td>"
+        + "</tr>";
+      block_html_image(parsed.history[x].item_id, parsed.history[x].data);
+    }
+    
+    shops_table = "<table width='100%'>"+shops_table+"</table>";
+    
+    el.innerHTML = "<pre>"+(pages_list===""?"":pages_list+"<hr style='margin:10px 0;'/>")+shops_table+(pages_list===""?"":"<hr style='margin:10px 0;'/>"+pages_list)+"</pre>";
+    el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
+    
+    document.getElementById("shops").classList.remove("hidden");
+  }
+}
+
+document.addEventListener("click", function(e) {
+  if(e.target.id === "blocks_sbmt" || e.target.id === "blocks_sbmt2") {
     document.getElementById("violations").classList.add("hidden");
     document.getElementById("info").classList.add("hidden");
     document.getElementById("regions").classList.add("hidden");
     document.getElementById("warps").classList.add("hidden");
     document.getElementById("blocks").classList.add("hidden");
+    document.getElementById("shops").classList.add("hidden");
     
-    blocks2.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
+    if(e.target.id === "blocks_sbmt") {
+      var coords = blocks_x_z.value.split(",");
+      if(coords.length === 3) {
+        blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&y="+coords[1]+"&z="+coords[2]);
+      } else if(coords.length === 2) {
+        blocks2.send("http://api.ensemplix.ru/v2/blocks/location/?world="+blocks_world.value+"&x="+coords[0]+"&z="+coords[1]);
+      }
+    } else {
+      blocks2.send("http://api.ensemplix.ru/v2/blocks/?id="+blocks_id_data.value.split(":")[0]+(!!blocks_id_data.value.split(":")[1]?"&data="+blocks_id_data.value.split(":")[1]:""));
+    }
   } else if(e.target.id === "player_sbmt") {
     history.replaceState("", document.title, window.location.pathname + "#Loading...");
     
@@ -1062,6 +1165,12 @@ document.addEventListener("click", function(e) {
       warps.send("http://api.ensemplix.ru/v2/warps/player/?player="+player_input.value);
     } else {
       document.getElementById("warps").classList.add("hidden");
+    }
+    
+    if(shops_check.checked) {
+      shops.send("http://api.ensemplix.ru/v2/shops/player/?player="+player_input.value);
+    } else {
+      document.getElementById("shops").classList.add("hidden");
     }
     
     history.replaceState("", document.title, window.location.pathname + "#" + player_input.value);
