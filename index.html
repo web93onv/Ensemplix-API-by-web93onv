@@ -207,7 +207,7 @@
                     } else {
                       res += "<td width='100%'>"
                           + "<div class='progress' style='margin-bottom:0;'>"
-                            + "<div class='progress-bar progress-bar-danger' style='width:0;'>Offline</div>"
+                            + "<div class='progress-bar progress-bar-danger' style='width:100%;'>Offline</div>"
                           + "</div>"
                         +"</td>"
                         +"<td></td>";
@@ -1057,28 +1057,9 @@ shops.callback = function(e) {
     // пагинация
     var pages_list = pagination(parsed,"http://api.ensemplix.ru/v2/shops/player/?player="+player_input.value,"shops.send");
     
-    /*"history": [
-    {
-        "id": 1606328,
-        "item": "ЗЕМЛЯ",
-        "amount": 64,
-        "price": 999,
-        "operation": false,
-        "from": "ensiriuswOw",
-        "to": "Prof_Dumbledor",
-        "x": 4035,
-        "y": 65,
-        "z": -938,
-        "world": "Sandbox",
-        "created": 1395970203,
-        "item_id": 3,
-        "data": 0,
-        "icon_image": "http://ensemplix.ru/images/items/Dirt.png"
-    },*/
-    
     var shops_table = "";
     
-    for(var x = 0; x < parsed.history.length; x++) { // parsed.history[x]
+    for(var x = 0; x < parsed.history.length; x++) {
       var world = parsed.history[x].world;
       var created = timeToHuman(parsed.history[x].created);
       var from = parsed.history[x].from;
