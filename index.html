@@ -283,10 +283,7 @@
           <select id="blocks_world" class="form-control">
             <option value="Sandbox">Sandbox</option>
             <option value="CarnageR4">Carnage</option>
-            <option value="AmberR4">Amber</option>
-            <option value="DedalR2">Dedal</option>
             <option value="Davids">Davids</option>
-            <option value="Davids152">Davids (до 16 марта)</option>
           </select>
         </div>
         <div class="form-group">
@@ -622,8 +619,7 @@ info.callback = function(e) {
       +(clan!=""?"Клан: <b>"+clan+"</b><br/>":"")
       +"Имущество: <b>"+moneyParse(parsed.coins)+" койн</b><br/>"
       +"Опыт: <b>"+moneyParse(parsed.experience)+" XP</b><br/>"
-      +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b><br/>"
-      +"Последний раз был на сайте: <b>"+timeToHuman(parsed.last_online)+"</b>";
+      +"Дата регистрации: <b>"+timeToHuman(parsed.registration)+"</b>";
     
     el.innerHTML = "<pre>"+res2+"</pre>";
     el_src.innerHTML = JSON.stringify(parsed,undefined,2);
@@ -805,7 +801,10 @@ regions.callback = function(e) {
         +"<br/>"
         +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br/>":"")
         +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br/>":"")
+        +(region.priority==0||region.priority==null?"":"<b>Приоритет:</b> "+region.priority+"<br/>")
         +(region.flags.length==0?"":"<b>Флаги:</b> "+region.flags.join(", ")+"<br/>")
+        +(region.children.length==0?"":"<b>Локальные регионы:</b> "+region.children.join(", ")+"<br/>")
+        +(region.parent==null?"":"<b>Глобальный регион:</b> "+region.parent+"<br/>")
         +"<b>Объем:</b> "+(xlength+1)+"&times;"+(ylength+1)+"&times;"+(zlength+1)+" = "+region_volume+" блок(ов)<br/>"
         +"<b>Дата создания:</b> "+timeToHuman(region.created)+"</li>";
     }
