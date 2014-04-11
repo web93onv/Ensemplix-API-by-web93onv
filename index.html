@@ -272,6 +272,11 @@
           </label>
         </div>
       </div>
+      <div class="checkbox">
+        <label>
+          <input id="hideUnknownRegions" type="checkbox" checked onchange="localStorage['hideUnknownRegions']=this.checked;" /> Скрывать регионы неизвестных серверов
+        </label>
+      </div>
     </form>
     <div id="blocks_input" class="hidden">
       <hr style="margin:10px 0;"/>
@@ -723,6 +728,8 @@ regions.callback = function(e) {
       banned_status[player] = player_link(player);
     }
     
+    var player_regexp = RegExp("^"+player_input.value+"$", "i");
+    
     // список регионов
     var regions_list = "";
     for(var x = 0; x < parsed.regions.length; x++) {
@@ -746,11 +753,18 @@ regions.callback = function(e) {
       // объем региона
       var region_volume = moneyParse((xlength+1)*(ylength+1)*(zlength+1));
       
+      // пометка "владелец" или "житель"
+      var region_status = "";
+      
       var members = "";
       if(region.members.length != 0) {
         members = [];
         for(var y = 0; y < region.members.length; y++) {
           members.push(banned_status[region.members[y]]);
+          
+          if(player_regexp.test(region.members[y])) {
+            region_status = "Житель";
+          }
         }
         members = members.join(" ");
       }
@@ -760,6 +774,10 @@ regions.callback = function(e) {
         owners = [];
         for(var y = 0; y < region.owners.length; y++) {
           owners.push(banned_status[region.owners[y]]);
+          
+          if(player_regexp.test(region.owners[y])) {
+            region_status = "Владелец";
+          }
         }
         owners = owners.join(" ");
       }
@@ -789,7 +807,13 @@ regions.callback = function(e) {
       var removed_region = "";
       var removed_region_highlight = "";
       if(!/^(Sandbox|CarnageR4|AmberR4|DedalR4|Davids)($|_)/.test(region.world)) {
-        removed_region_highlight = " style='opacity:.6;'"
+      
+        // пропуск регионов из удаленных серверов
+        if(hideUnknownRegions && hideUnknownRegions.checked) {
+          continue;
+        }
+        
+        removed_region_highlight = " style='opacity:.6;'";
         removed_region = "<b style='display:inline-block;float:right;'> МИР УДАЛЕН</b>";
       }
       
@@ -799,6 +823,7 @@ regions.callback = function(e) {
         +", /tp "+xcenter+","+ycenter+","+zcenter
         +removed_region
         +"<br/>"
+        +"<span style='display:inline-block;float:right;'>"+region_status+"</span>"
         +(owners!=""?"<b>Владельцы:</b>&nbsp;"+owners+"<br/>":"")
         +(members!=""?"<b>Жители:</b>&nbsp;"+members+"<br/>":"")
         +(region.priority==0||region.priority==null?"":"<b>Приоритет:</b> "+region.priority+"<br/>")
@@ -1183,8 +1208,15 @@ if(player != "") {
 }
 
 var ls = localStorage;
+
 if(ls["first_time_join"] == undefined) {
   document.getElementById("first_time_join").classList.toggle("hidden");
+}
+
+if(ls["hideUnknownRegions"] == "true") {
+  hideUnknownRegions.checked = true;
+} else if(ls["hideUnknownRegions"] == "false") {
+  hideUnknownRegions.checked = false;
 }
 
 function ozozolka() {
