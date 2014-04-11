@@ -5,9 +5,9 @@
   <meta content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=no;" name="viewport" />
   <title>Ensemplix API by web93onv</title>
   <meta name="robots" content="noindex,nofollow" />
-  <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+  <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" />
   <link rel="stylesheet" href="blocks_items.css" />
   <link rel="stylesheet" href="mc_font.css" />
   <style>
@@ -81,26 +81,20 @@
           <li><a href="https://ensemplix.ru/banlist" target="_blank">Банлист</a></li>
         </ul>
       </li>
-      <li class="dropdown">
-        <a href="#" target="_blank" class="dropdown-toggle" data-toggle="dropdown">Карты серверов <b class="caret"></b></a>
-        <ul class="dropdown-menu">
-          <li><a href="http://map.ensemplix.ru" target="_blank">Sandbox</a></li>
-        </ul>
-      </li>
       <li><a href="mc-color-chat.html">Цветной чат</a></li>
       <li><a href="blacklist.html">Блеклист</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li class="dropdown">
-        <a href="https://github.com/web93onv" target="_blank" class="icon dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
+        <a href="https://github.com/web93onv" target="_blank" class="icon dropdown-toggle" data-toggle="dropdown" style="background-image:url('https://plus.google.com/_/favicon?domain=github.com');background-position:15px center;background-repeat:no-repeat;padding-left:35px">GitHub <b class="caret"></b></a>
         <ul class="dropdown-menu">
           <li><a href="https://github.com/web93onv" target="_blank">web93onv GitHub Profile</a></li>
           <li class="divider"></li>
-          <li><a href="https://github.com/web93onv/Ensemplix-API-by-web93onv" target="_blank">Ensemplix API</a></li>
-          <li><a href="https://github.com/web93onv/Minecraft-items-and-blocks-CSS" target="_blank">Minecraft items and blocks CSS</a></li>
+          <li><a href="https://github.com/web93onv/Ensemplix-API-by-web93onv" target="_blank">Ensemplix API by web93onv</a></li>
+          <li><a href="https://github.com/web93onv/Minecraft-blocks-and-items-icons" target="_blank">Minecraft blocks and items icons</a></li>
         </ul>
       </li>
-      <li><a class="icon" href="http://pavlo.cc" target="_blank">Компьютерная помощь</a></li>
+      <li><a class="icon" href="http://pavlo.cc" target="_blank" style="background-image:url('https://plus.google.com/_/favicon?domain=pavlo.cc');background-position:15px center;background-repeat:no-repeat;padding-left:35px">Компьютерная помощь</a></li>
     </ul>
   </div>
 </nav>
@@ -127,17 +121,19 @@
           </div>
           <div id="banlist_list" class="modal-body">
             <script>
-            $.ajax({
-              url: "http://api.ensemplix.ru/v2/server/bans",
-              cache: false,
-              success: function(parsed){
-                var res = "";
-                for(var x = 0; x < parsed.bans.length; x++) {
-                  res += "<tr><td>"+player_link(parsed.bans[x])+"</td><td>"+player_link(parsed.bans[x].admin)+"</td></tr>";
+            $(document).ready(function() {
+              $.ajax({
+                url: "http://api.ensemplix.ru/v2/server/bans",
+                cache: false,
+                success: function(parsed){
+                  var res = "";
+                  for(var x = 0; x < parsed.bans.length; x++) {
+                    res += "<tr><td>"+player_link(parsed.bans[x])+"</td><td>"+player_link(parsed.bans[x].admin)+"</td></tr>";
+                  }
+                  res = "<table>"+res+"</table>";
+                  $("#banlist_list").append(res);
                 }
-                res = "<table>"+res+"</table>";
-                $("#banlist_list").append(res);
-              }
+              });
             });
             </script>
           </div>
@@ -164,6 +160,7 @@
           </div>
           <div id="serverlist_list" class="modal-body">
             <script>
+            var worlds = [];
             var prev = [];
             function progressBars() {
               $.ajax({
@@ -172,9 +169,17 @@
                 success: function(parsed){
                   var res = "";
                   
+                  if(worlds.length === 0) {
+                    for(var x = 0; x < parsed.length; x++) {
+                      worlds.push(parsed[x].world);
+                    }
+                  }
+                  
                   for(var x = 0; x < parsed.length; x++) {
                     res += "<tr>"
-                      + "<td>"+parsed[x].name+"</td>";
+                      + "<td>"+parsed[x].name+"<br/>"
+                      + "<small>"+parsed[x].server_version+"&nbsp;"+parsed[x].server_type+"</small>"
+                      + "</td>";
                     
                     if(parsed[x].online === true) {
                       if(prev[x]) {
@@ -224,8 +229,10 @@
                 }
               });
             }
-            progressBars();
-            setInterval(progressBars, 1e4);
+            $(document).ready(function() {
+              progressBars();
+              setInterval(progressBars, 1e4);
+            });
             </script>
           </div>
           <div class="modal-footer">
@@ -827,7 +834,8 @@ regions.callback = function(e) {
       // затенение регионов из удаленных миров (серверов)
       var removed_region = "";
       var removed_region_highlight = "";
-      if(!/^(Sandbox|CarnageR4|AmberR4|DedalR4|Davids)($|_)/.test(region.world)) {
+      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|CarnageR4|Davids") + ")($|_)");
+      if(!whitelist.test(region.world)) {
       
         // пропуск регионов из удаленных серверов
         if(hideUnknownRegions && hideUnknownRegions.checked) {
@@ -1272,17 +1280,6 @@ function ozozolka() {
     <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2014</p>
   </div>
 </div>
-
-<script>
-$("a[href^='http'].icon").each(function() {
-  $(this).css({
-    "background-image": "url(http://www.google.com/s2/u/0/favicons?domain=" + this.hostname + ")",
-    "background-position": "15px center",
-    "background-repeat": "no-repeat",
-    "padding-left": "35px"
-  });
-});
-</script>
 
 <script>
 if(location.protocol !== "file:") {
