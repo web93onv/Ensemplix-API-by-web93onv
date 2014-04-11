@@ -235,6 +235,32 @@
       </div>
     </div>
     
+    <button class="btn btn-default btn-xs" style="float:right;" data-toggle="modal" data-target="#settings">
+      <i class="glyphicon glyphicon-cog"></i>
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="settings" tabindex="-1" role="dialog" aria-labelledby="settings_label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title" id="settings_label">Настройки</h4>
+          </div>
+          <div id="serverlist_list" class="modal-body">
+            <div class="checkbox">
+              <label>
+                <input id="hideUnknownRegions" type="checkbox" checked onchange="localStorage['hideUnknownRegions']=this.checked;" /> Скрывать регионы неизвестных серверов
+              </label>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
     <hr style="margin:10px 0;"/>
     
     <form class="form-inline">
@@ -271,11 +297,6 @@
             <input id="shops_check" type="checkbox" /> Торговля
           </label>
         </div>
-      </div>
-      <div class="checkbox">
-        <label>
-          <input id="hideUnknownRegions" type="checkbox" checked onchange="localStorage['hideUnknownRegions']=this.checked;" /> Скрывать регионы неизвестных серверов
-        </label>
       </div>
     </form>
     <div id="blocks_input" class="hidden">
