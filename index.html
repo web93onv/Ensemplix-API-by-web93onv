@@ -916,8 +916,8 @@ warps.callback = function(e) {
   }
 }
 
-function block_html_image(block_id, block_data) {
-  return "<span class='item item_"+block_id+" item_"+block_id+"_"+block_data+"' title='#"+block_id+(block_data==0?"":":"+block_data)+"'></span>"
+function block_html_image(block_id, block_data, world) {
+  return "<span class='item"+(world==undefined?"":" "+world)+" item_"+block_id+" item_"+block_id+"_"+block_data+"' title='#"+block_id+(block_data==0?"":":"+block_data)+"'></span>"
 }
 
 var blocks = new request();
@@ -966,7 +966,7 @@ blocks.callback = function(e) {
       var block_y = parsed.blocks[x].y;
       var block_z = parsed.blocks[x].z;
       
-      var css_block_id = "item_"+id+" item_"+id+"_"+data;
+      var css_block_id = world+" item_"+id+" item_"+id+"_"+data;
       
       // перечень разрушенных/поставленных блоков
       if(type == 0) { // разрушил
@@ -974,6 +974,7 @@ blocks.callback = function(e) {
           breaked_blocks_db[css_block_id] = {};
           breaked_blocks_db[css_block_id].id = id;
           breaked_blocks_db[css_block_id].data = data;
+          breaked_blocks_db[css_block_id].world = world;
           breaked_blocks_db[css_block_id].count = 1;
         } else {
           breaked_blocks_db[css_block_id].count++;
@@ -983,6 +984,7 @@ blocks.callback = function(e) {
           placed_blocks_db[css_block_id] = {};
           placed_blocks_db[css_block_id].id = id;
           placed_blocks_db[css_block_id].data = data;
+          placed_blocks_db[css_block_id].world = world;
           placed_blocks_db[css_block_id].count = 1;
         } else {
           placed_blocks_db[css_block_id].count++;
@@ -992,7 +994,7 @@ blocks.callback = function(e) {
       blocks_table += "<tr>"
         +"<td>"+world+"</td>"
         +"<td>"+banned_status[player]+"</td>"
-        +"<td>"+block_html_image(id, data)+" "+(type==0?"разрушил":"поставил")+" #"+id+(data==0?"":":"+data)+"</td>"
+        +"<td>"+block_html_image(id, data, world)+" "+(type==0?"разрушил":"поставил")+" #"+id+(data==0?"":":"+data)+"</td>"
         +"<td><span class='transparent'>/tp</span> "+block_x+"<span class='transparent'>,</span>"+block_y+"<span class='transparent'>,</span>"+block_z+"</td>"
         +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td>"
         +"</tr>";
@@ -1004,7 +1006,7 @@ blocks.callback = function(e) {
     // перечень разрушенных блоков
     var breaked_blocks_summary = "";
     for(var x in breaked_blocks_db) {
-      breaked_blocks_summary += block_html_image(breaked_blocks_db[x].id, breaked_blocks_db[x].data)+"&times;"+breaked_blocks_db[x].count+" ";
+      breaked_blocks_summary += block_html_image(breaked_blocks_db[x].id, breaked_blocks_db[x].data, breaked_blocks_db[x].world)+"&times;"+breaked_blocks_db[x].count+" ";
     }
     if(breaked_blocks_summary !== "") {
       breaked_blocks_summary = "<table><tr><td>Разрушил: "+breaked_blocks_summary+"</td></tr></table>";
@@ -1013,7 +1015,7 @@ blocks.callback = function(e) {
     // перечень поставленных блоков
     var placed_blocks_summary = "";
     for(var x in placed_blocks_db) {
-      placed_blocks_summary += block_html_image(placed_blocks_db[x].id, placed_blocks_db[x].data)+"&times;"+placed_blocks_db[x].count+" ";
+      placed_blocks_summary += block_html_image(placed_blocks_db[x].id, placed_blocks_db[x].data, placed_blocks_db[x].world)+"&times;"+placed_blocks_db[x].count+" ";
     }
     if(placed_blocks_summary !== "") {
       placed_blocks_summary = "<table><tr><td>Поставил: "+placed_blocks_summary+"</td></tr></table>";
@@ -1069,7 +1071,7 @@ blocks2.callback = function(e) {
       blocks_table += "<tr>"
         +"<td>"+world+"</td>"
         +"<td>"+banned_status[player]+"</td>"
-        +"<td>"+block_html_image(id, data)+" "+(type==0?"разрушил":"поставил")+" #"+id+(data==0?"":":"+data)+"</td>"
+        +"<td>"+block_html_image(id, data, world)+" "+(type==0?"разрушил":"поставил")+" #"+id+(data==0?"":":"+data)+"</td>"
         +"<td><span class='transparent'>/tp</span> "+block_x+"<span class='transparent'>,</span>"+block_y+"<span class='transparent'>,</span>"+block_z+"</td>"
         +"<td>"+timeToHuman(parsed.blocks[x].created)+"</td>"
         +"</tr>";
@@ -1132,12 +1134,12 @@ shops.callback = function(e) {
       shops_table += "<tr>"
           + "<td>"+world+"&nbsp;</td>"
           + "<td>"+player_link(from)+" "+operation+" "+player_link(to)+"</td>"
-          + "<td>"+block_html_image(item_id, data)+"</td>"
+          + "<td>"+block_html_image(item_id, data, world)+"</td>"
+          + "<td><b>#"+item_id+(data==0?"":":"+data)+"</b></td>"
           + "<td>"+amount+"шт. за <b>"+price+" койн</b></td>"
           + "<td><span class='transparent'>/tp</span> "+shop_x+"<span class='transparent'>,</span>"+shop_y+"<span class='transparent'>,</span>"+shop_z+"</td>"
           + "<td>"+created+"</td>"
         + "</tr>";
-      block_html_image(parsed.history[x].item_id, parsed.history[x].data);
     }
     
     shops_table = "<table width='100%'>"+shops_table+"</table>";
