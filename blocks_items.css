@@ -1847,13 +1847,13 @@
 
 /* fix */
 .Davids.item_216 {background-position:-64px -64px !important;background-image:url(blocks_items_ic_exp.png) !important;}
-.AmberR4.item_216 {background-position:-512px 0px !important;background-image:url(blocks_items_divinerpg.png) !important;}
+.AmberR4.item_216, .Amber.item_216 {background-position:-512px 0px !important;background-image:url(blocks_items_divinerpg.png) !important;}
 
 .Davids.item_217 {background-position:0px -64px !important;background-image:url(blocks_items_ic_exp.png) !important;}
-.AmberR4.item_217 {background-position:-544px 0px !important;background-image:url(blocks_items_divinerpg.png) !important;}
+.AmberR4.item_217, .Amber.item_217 {background-position:-544px 0px !important;background-image:url(blocks_items_divinerpg.png) !important;}
 
 .Davids.item_218 {background-position:-384px -32px !important;background-image:url(blocks_items_ic_exp.png) !important;}
-.AmberR4.item_218 {background-position:-576px 0px !important;background-image:url(blocks_items_divinerpg.png) !important;}
+.AmberR4.item_218, .Amber.item_218 {background-position:-576px 0px !important;background-image:url(blocks_items_divinerpg.png) !important;}
 
 .Davids.item_4095_0 {background-position:-416px 0px !important;background-image:url(blocks_items_nuclear_control.png) !important;}
 .Davids.item_4095_1 {background-position:-448px 0px !important;background-image:url(blocks_items_nuclear_control.png) !important;}
@@ -1867,14 +1867,25 @@
 .Davids.item_4095_9 {background-position:-704px 0px !important;background-image:url(blocks_items_nuclear_control.png) !important;}
 .Davids.item_4095_10 {background-position:-736px 0px !important;background-image:url(blocks_items_nuclear_control.png) !important;}
 
-.AmberR4.item_4095_0 {background-position:0px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_1 {background-position:-32px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_2 {background-position:-64px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_3 {background-position:-96px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_4 {background-position:-128px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_5 {background-position:-160px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_6 {background-position:-192px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
-.AmberR4.item_4095_7 {background-position:-224px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_0, .Amber.item_4095_0 {background-position:0px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_1, .Amber.item_4095_1 {background-position:-32px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_2, .Amber.item_4095_2 {background-position:-64px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_3, .Amber.item_4095_3 {background-position:-96px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_4, .Amber.item_4095_4 {background-position:-128px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_5, .Amber.item_4095_5 {background-position:-160px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_6, .Amber.item_4095_6 {background-position:-192px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.AmberR4.item_4095_7, .Amber.item_4095_7 {background-position:-224px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+
+.AmberR4.item_975 {background-position:-9184px 0px !important;background-image:url(blocks_items_divinerpg.png); !important}
+
+.Davids.item_975_0 {background-position:0px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_1 {background-position:-32px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_2 {background-position:-64px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_3 {background-position:-96px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_4 {background-position:-128px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_5 {background-position:-160px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_6 {background-position:-192px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
+.Davids.item_975_7 {background-position:-224px 0px !important;background-image:url(blocks_items_iron_chest.png) !important;}
 
 /* thaumcraft */
 .item_2400_0 {background-position:0px 0px;background-image:url(blocks_items_thaumcraft.png);}
