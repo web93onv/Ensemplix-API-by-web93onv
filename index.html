@@ -1113,6 +1113,14 @@ shops.callback = function(e) {
     var pages_list = pagination(parsed,"http://api.ensemplix.ru/v2/shops/player/?player="+player_input.value,"shops.send");
     
     var shops_table = "";
+      
+    shops_table += "<tr>"
+        + "<th>Сервер</th>"
+        + "<th>Операция</th>"
+        + "<th colspan='2'>Предмет</th>"
+        + "<th>Координаты</th>"
+        + "<th>Время</th>"
+      + "</tr>";
     
     for(var x = 0; x < parsed.history.length; x++) {
       var world = parsed.history[x].world;
@@ -1132,19 +1140,21 @@ shops.callback = function(e) {
       var shop_z = parsed.history[x].z;
       
       shops_table += "<tr>"
-          + "<td>"+world+"&nbsp;</td>"
+          + "<td>"+world+"</td>"
           + "<td>"+player_link(from)+" "+operation+" "+player_link(to)+"</td>"
           + "<td>"+block_html_image(item_id, data, world)+"</td>"
-          + "<td><b>#"+item_id+(data==0?"":":"+data)+"</b></td>"
-          + "<td>"+amount+"шт. за <b>"+price+" койн</b></td>"
-          + "<td><span class='transparent'>/tp</span> "+shop_x+"<span class='transparent'>,</span>"+shop_y+"<span class='transparent'>,</span>"+shop_z+"</td>"
+          + "<td>"
+            + "<b>#"+item_id+(data==0?"":":"+data)+"</b><br/>"
+            + amount+"шт. за <b>"+price+" койн</b>"
+          + "</td>"
+          + "<td>"+shop_x+","+shop_y+","+shop_z+"</td>"
           + "<td>"+created+"</td>"
         + "</tr>";
     }
     
-    shops_table = "<table width='100%'>"+shops_table+"</table>";
+    shops_table = "<table width='100%' class='table table-striped'>"+shops_table+"</table>";
     
-    el.innerHTML = "<pre>"+(pages_list===""?"":pages_list+"<hr style='margin:10px 0;'/>")+shops_table+(pages_list===""?"":"<hr style='margin:10px 0;'/>"+pages_list)+"</pre>";
+    el.innerHTML = "<pre>"+(pages_list===""?"":pages_list+"<br/><br/>")+shops_table+(pages_list===""?"":pages_list)+"</pre>";
     el_src.innerHTML = JSON.stringify(JSON.parse(xmlhttp.responseText),undefined,2);
     
     document.getElementById("shops").classList.remove("hidden");
