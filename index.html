@@ -159,7 +159,6 @@
           </div>
           <div id="serverlist_list" class="modal-body">
             <script>
-            var worlds = [];
             var prev = [];
             function progressBars() {
               $.ajax({
@@ -167,12 +166,6 @@
                 cache: false,
                 success: function(parsed){
                   var res = "";
-                  
-                  if(worlds.length === 0) {
-                    for(var x = 0; x < parsed.length; x++) {
-                      worlds.push(parsed[x].world);
-                    }
-                  }
                   
                   for(var x = 0; x < parsed.length; x++) {
                     res += "<tr>"
@@ -314,8 +307,31 @@
         <div class="form-group">
           <select id="blocks_world" class="form-control">
             <option value="Sandbox">Sandbox</option>
-            <option value="CarnageR4">Carnage</option>
             <option value="Davids">Davids</option>
+            <option value="CarnageR4">Carnage</option>
+            <option value="Amber">Amber</option>
+            <script>
+              var worlds = [];
+              $.ajax({
+                url: "http://api.ensemplix.ru/v2/server/game",
+                cache: false,
+                success: function(parsed){
+                  var res = "";
+                  
+                  if(worlds.length === 0) {
+                    for(var x = 0; x < parsed.length; x++) {
+                      worlds.push(parsed[x].world);
+                    }
+                  }
+                  
+                  for(var x = 0; x < parsed.length; x++) {
+                    res += "<option value='" + parsed[x].world + "'>" + parsed[x].name + "</option>";
+                  }
+                  
+                  $("#blocks_world").html(res);
+                }
+              });
+            </script>
           </select>
         </div>
         <div class="form-group">
@@ -833,7 +849,7 @@ regions.callback = function(e) {
       // затенение регионов из удаленных миров (серверов)
       var removed_region = "";
       var removed_region_highlight = "";
-      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|CarnageR4|Davids") + ")($|_)");
+      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|Davids|CarnageR4|Amber) + ")($|_)");
       if(!whitelist.test(region.world)) {
       
         // пропуск регионов из удаленных серверов
