@@ -849,7 +849,7 @@ regions.callback = function(e) {
       // затенение регионов из удаленных миров (серверов)
       var removed_region = "";
       var removed_region_highlight = "";
-      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|Davids|CarnageR4|Amber) + ")($|_)");
+      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|Davids|CarnageR4|Amber") + ")($|_)");
       if(!whitelist.test(region.world)) {
       
         // пропуск регионов из удаленных серверов
