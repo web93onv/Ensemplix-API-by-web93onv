@@ -305,11 +305,12 @@
           <input id="blocks_x_z" type="text" class="form-control" value="0,0" placeholder="<x>,[y],<z>" />
         </div>
         <div class="form-group">
-          <select id="blocks_world" class="form-control">
+          <select id="blocks_world" class="form-control" onchange="selectChange(this)">
             <option value="Sandbox">Sandbox</option>
-            <option value="Davids">Davids</option>
+            <option value="DavidsR3">Davids</option>
             <option value="CarnageR4">Carnage</option>
             <option value="Amber">Amber</option>
+            <option value="custom">Другой...</option>
             <script>
               var worlds = [];
               $.ajax({
@@ -327,10 +328,20 @@
                   for(var x = 0; x < parsed.length; x++) {
                     res += "<option value='" + parsed[x].world + "'>" + parsed[x].name + "</option>";
                   }
+
+                  res += "<option value='custom'>Другой...</option>";
                   
                   $("#blocks_world").html(res);
                 }
               });
+              function selectChange(selectEl) {
+                if(selectEl.value != "custom") return;
+                
+                var value = prompt("Введите название мира", "");
+                if(value == null) return;
+
+                selectEl.innerHTML += "<option selected>" + value + "</option>";
+              }
             </script>
           </select>
         </div>
@@ -849,7 +860,7 @@ regions.callback = function(e) {
       // затенение регионов из удаленных миров (серверов)
       var removed_region = "";
       var removed_region_highlight = "";
-      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|Davids|CarnageR4|Amber") + ")($|_)");
+      var whitelist = new RegExp("^(" + (worlds.join("|") || "Sandbox|DavidsR3|CarnageR4|Amber") + ")($|_)");
       if(!whitelist.test(region.world)) {
       
         // пропуск регионов из удаленных серверов
@@ -1304,7 +1315,7 @@ function ozozolka() {
 
 <div id="footer">
   <div class="container">
-    <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2014</p>
+    <p class="muted credit" style="margin:20px 0;color:#999;">&copy; 2013-2015</p>
   </div>
 </div>
 
